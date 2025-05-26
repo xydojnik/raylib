@@ -1,0 +1,46 @@
+
+examples/audio/resources/
+examples/core/resources/
+examples/models/resources/
+examples/ohters/resources/
+examples/shapes/resources/
+examples/shaders/resources/
+examples/text/resources/
+examples/textures/resources/
+
+#images
+*.png
+*.hdr
+
+#audio
+*.mp3
+*.xm
+*.wav
+*.ogg
+*.flac
+*.qoa
+
+#font
+*.ttf
+*.fnt
+
+#models
+*.glb
+*.blend
+*.m3d
+*.obj
+*.iqm
+*.vox
+
+# Ignore common editor/system specific metadata
+.DS_Store
+.idea/
+.vscode/
+*.iml
+
+# ENV
+.env
+
+# vweb and database
+*.db
+*.js
