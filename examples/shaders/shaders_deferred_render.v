@@ -15,7 +15,8 @@ module main
 import raylib as rl
 
 
-const max_cubes = 30
+const asset_path = @VMODROOT+'/thirdparty/raylib/examples/shaders/resources/'
+const max_cubes  = 30
 
 
 // FrameBuffer
@@ -159,8 +160,8 @@ fn main() {
         cube .unload()
     }
 
-    tex1 := rl.Texture.load('resources/texel_checker.png')
-    tex2 := rl.Texture.load('resources/cubicmap_atlas.png')
+    tex1 := rl.Texture.load(asset_path+'texel_checker.png')
+    tex2 := rl.Texture.load(asset_path+'cubicmap_atlas.png')
     defer {
         tex1.unload()
         tex2.unload()
@@ -168,14 +169,14 @@ fn main() {
 
     // Load geometry buffer (G-buffer) shader and deferred shader
     gbuffer_shader := rl.Shader.load(
-        c'resources/shaders/glsl330/gbuffer.vs',
-        c'resources/shaders/glsl330/gbuffer.fs'
+        (asset_path+'shaders/glsl330/gbuffer.vs').str,
+        (asset_path+'shaders/glsl330/gbuffer.fs').str
     )!
     defer { gbuffer_shader.unload() }
     
     mut deferred_shader := rl.Shader.load(
-        c'resources/shaders/glsl330/deferred_shading.vs',
-        c'resources/shaders/glsl330/deferred_shading.fs'
+        (asset_path+'shaders/glsl330/deferred_shading.vs').str,
+        (asset_path+'shaders/glsl330/deferred_shading.fs').str
     )!
     defer { deferred_shader.unload() }
     
@@ -196,7 +197,6 @@ fn main() {
     // Assign out lighting shader to model
     model.set_texture(0, rl.material_map_albedo, tex1)
     model.set_shader(0, gbuffer_shader)
-    
     cube.set_texture(0, rl.material_map_albedo, tex2)
     cube.set_shader(0, gbuffer_shader)
     
@@ -338,8 +338,8 @@ fn main() {
                                 // rl.draw_sphere(light.position, 0.2, light.color)
                                 rl.draw_sphere(light.position, 0.2, light.color)
                             } else {
-                                rl.draw_sphere_wires(light.position, 0.2, 8, 8, rl.color_alpha(light.color, 0.3))
-                                rl.draw_sphere_wires(light.position, 0.2, 8, 8, rl.color_alpha(light.color, 0.3))
+                                rl.draw_sphere_wires(light.position, 0.2, 8, 8, rl.Color.alpha(light.color, 0.3))
+                                rl.draw_sphere_wires(light.position, 0.2, 8, 8, rl.Color.alpha(light.color, 0.3))
                             }
                         }
                         rl.rl_disable_shader()

@@ -31,6 +31,7 @@ module main
 
 import raylib as rl
 
+const asset_path = @VMODROOT+'/thirdparty/raylib/examples/shaders/resources/'
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -49,7 +50,7 @@ fn main() {
 
     // Load Eratosthenes shader
     // NOTE: Defining unsafe{nil} or voidptr(0) for vertex shader forces usage of internal default vertex shader
-    shader := rl.Shader.load(voidptr(0), c'resources/shaders/glsl330/eratosthenes.fs')!
+    shader := rl.Shader.load(voidptr(0), (asset_path+'shaders/glsl330/eratosthenes.fs').str)!
     defer { shader.unload() }               // Unload shader
     
     rl.set_target_fps(60)                   // Set our game to run at 60 frames-per-second
@@ -91,9 +92,5 @@ fn main() {
             )
             rl.end_shader_mode()
         rl.end_drawing()
-
-
-
-
     }
 }

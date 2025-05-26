@@ -26,6 +26,7 @@ import json
 
 const max_lights = 5           // Max dynamic lights supported by shader
 
+const asset_path = @VMODROOT+'/thirdparty/raylib/examples/shaders/resources/'
 
 //----------------------------------------------------------------------------------
 // Types and Structures Definition
@@ -422,10 +423,15 @@ fn main() {
     }
 
     // Load PBR shader and setup all required locations
-    mut shader := rl.load_shader(
-        c'resources/shaders/glsl330/pbr.vs',
-        c'resources/shaders/glsl330/pbr.fs'
-    )
+    // mut shader := rl.load_shader(
+    //     c'resources/shaders/glsl330/pbr.vs',
+    //     c'resources/shaders/glsl330/pbr.fs'
+    // )
+    mut shader := rl.Shader.load(
+        (asset_path+'shaders/glsl330/pbr.vs').str,
+        (asset_path+'shaders/glsl330/pbr.fs').str
+    )!
+    
     shader.set_loc(rl.shader_loc_map_albedo,    'albedoMap')
     // WARNING: Metalness, roughness, and ambient occlusion are all packed into a MRA texture
     // They are passed as to the rl.shader_loc_map_metalness location for convenience,

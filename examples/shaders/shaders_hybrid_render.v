@@ -10,7 +10,7 @@
 *   BSD-like license that allows static linking with closed source software
 *
 *   Copyright           (c) 2022-2023 Buğra Alptekin Sarı (@BugraAlptekinSari)
-*   Translated&Modified (c) 2024      Fedorov Alexandr   (@xydojnik)
+*   Translated&Modified (c) 2024      Fedorov Alexandr    (@xydojnik)
 *
 ********************************************************************************************/
 
@@ -20,6 +20,7 @@ module main
 import raylib as rl
 
 
+const asset_path   = @VMODROOT+'/thirdparty/raylib/examples/shaders/resources/'
 const glsl_version = $if PLATFORM_DESKTOP ? { 330 } $else { 100 }
 
 
@@ -47,12 +48,12 @@ fn main() {
     defer { rl.close_window() }       // Close window and OpenGL context
 
     // This Shader calculates pixel depth and color using raymarch
-    shdr_raymarch := rl.Shader.load(voidptr(0), 'resources/shaders/glsl${glsl_version}/hybrid_raymarch.fs'.str)!
+    shdr_raymarch := rl.Shader.load(voidptr(0), (asset_path+'shaders/glsl${glsl_version}/hybrid_raymarch.fs').str)!
     defer { shdr_raymarch.unload() }
 
     // This Shader is a standard rasterization fragment shader with the addition of depth writing
     // You are required to write depth for all shaders if one shader does it
-    shdr_raster := rl.Shader.load(voidptr(0), 'resources/shaders/glsl${glsl_version}/hybrid_raster.fs'.str)!
+    shdr_raster := rl.Shader.load(voidptr(0), (asset_path+'shaders/glsl${glsl_version}/hybrid_raster.fs').str)!
     defer { shdr_raster.unload() }
 
     // Declare Struct used to store camera locs.

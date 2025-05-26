@@ -17,6 +17,8 @@ module main
 
 import raylib as rl
 
+const asset_path = @VMODROOT+'/thirdparty/raylib/examples/audio/resources/'
+
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -27,13 +29,13 @@ fn main() {
     screen_width  := 800
     screen_height := 450
 
-    rl.init_window(screen_width, screen_height, "raylib [audio] example - music playing (streaming)")
+    rl.init_window(screen_width, screen_height, 'raylib [audio] example - music playing (streaming)')
     defer { rl.close_window() } // Close window and OpenGL context
 
     rl.init_audio_device()            // Initialize audio device
     defer { rl.close_audio_device() } // Close audio device (music streaming is automatically stopped)
 
-    music := rl.load_music_stream("resources/country.mp3")
+    music := rl.load_music_stream(asset_path+'country.mp3')
     defer { rl.unload_music_stream(music) } // Unload music stream buffers from RAM
 
     rl.play_music_stream(music)
@@ -79,16 +81,15 @@ fn main() {
 
             rl.clear_background(rl.raywhite)
 
-            rl.draw_text("MUSIC SHOULD BE PLAYING!", 255, 150, 20, rl.lightgray)
+            rl.draw_text('MUSIC SHOULD BE PLAYING!', 255, 150, 20, rl.lightgray)
 
             rl.draw_rectangle(200, 200, 400                   , 12, rl.lightgray)
             rl.draw_rectangle(200, 200, int(time_played*400.0), 12, rl.maroon)
             rl.draw_rectangle_lines(200, 200, 400, 12, rl.gray)
 
-            rl.draw_text("PRESS SPACE TO RESTART MUSIC",  215, 250, 20, rl.lightgray)
-            rl.draw_text("PRESS P TO PAUSE/RESUME MUSIC", 208, 280, 20, rl.lightgray)
+            rl.draw_text('PRESS SPACE TO RESTART MUSIC',  215, 250, 20, rl.lightgray)
+            rl.draw_text('PRESS P TO PAUSE/RESUME MUSIC', 208, 280, 20, rl.lightgray)
 
         rl.end_drawing()
-        //----------------------------------------------------------------------------------
     }
 }

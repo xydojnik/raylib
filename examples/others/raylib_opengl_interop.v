@@ -35,6 +35,7 @@ import raylib as rl
 
 #include "@VMODROOT/thirdparty/raylib/src/external/glad.h"
 
+const asset_path = @VMODROOT+'/thirdparty/raylib/examples/others/resources/'
 
 fn C.glGenVertexArrays(int, &u32)
 fn C.glBindVertexArray(u32)
@@ -85,8 +86,8 @@ fn main() {
     defer { rl.close_window() }         // Close window and OpenGL context
 
     shader := rl.Shader.load(
-        c'resources/shaders/glsl330/point_particle.vs',
-        c'resources/shaders/glsl330/point_particle.fs'
+        (asset_path+'shaders/glsl330/point_particle.vs').str,
+        (asset_path+'shaders/glsl330/point_particle.fs').str
     )!
     defer { rl.unload_shader(shader) }  // Unload shader
 

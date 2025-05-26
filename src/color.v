@@ -108,15 +108,14 @@ pub fn Color.alpha_blend(dst Color, src Color, tint Color) Color {
 	return C.ColorAlphaBlend(dst, src, tint)
 }
 
-fn C.GetColor(hexValue u32) Color
+fn C.GetColor(hex_value u32) Color
 @[inline]
-pub fn Color.get(hexValue u32) Color {
-	return C.GetColor(hexValue)
+pub fn Color.get(hex_value u32) Color {
+	return C.GetColor(hex_value)
 }
 
 
-
-
+// Using v like methods.
 @[inline]
 pub fn (c Color) fade(alpha f32) Color {
     return C.Fade(c, alpha)
@@ -124,7 +123,7 @@ pub fn (c Color) fade(alpha f32) Color {
 
 @[inline]
 pub fn (c Color) lerp(c1 Color, lerp f32) Color {
-	return C.ColorLerp(c, c1, lerp)
+    return C.ColorLerp(c, c1, lerp)
 }
 
 @[inline]

@@ -24,6 +24,8 @@ module main
 
 import raylib as rl
 
+const asset_path = @VMODROOT+'/thirdparty/raylib/examples/shaders/resources/'
+
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -56,10 +58,11 @@ fn main() {
     }
 
     // Load basic lighting shader
-    mut shader := rl.load_shader(
-        c'resources/shaders/glsl330/lighting.vs',
-        c'resources/shaders/glsl330/lighting.fs'
-    )
+    mut shader := rl.Shader.load(
+        (asset_path+'shaders/glsl330/lighting.vs').str,
+        (asset_path+'shaders/glsl330/lighting.fs').str
+    )!
+    
     defer { shader.unload() } // Unload shader
     
     // Get some required shader locations
@@ -150,7 +153,7 @@ fn main() {
                     if light.enabled {
                         rl.draw_sphere_ex(light.position, 0.2, 8, 8, light.color)
                     } else {
-                        rl.draw_sphere_wires(light.position, 0.2, 8, 8, rl.color_alpha(light.color, 0.3))
+                        rl.draw_sphere_wires(light.position, 0.2, 8, 8, rl.Color.alpha(light.color, 0.3))
                     }
                 }
         

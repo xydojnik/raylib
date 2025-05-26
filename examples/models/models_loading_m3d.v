@@ -13,7 +13,7 @@
 *   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
 *   BSD-like license that allows static linking with closed source software
 *
-*   Copyright           (c) 2022-2023 bzt               (@bztsrc)
+*   Copyright           (c) 2022-2023 bzt              (@bztsrc)
 *   Translated&Modified (c) 2024      Fedorov Alexandr (@xydojnik)
 *
 ********************************************************************************************/
@@ -22,6 +22,8 @@ module main
 
 
 import raylib as rl
+
+const asset_path = @VMODROOT+'/thirdparty/raylib/examples/models/resources/'
 
 
 //------------------------------------------------------------------------------------
@@ -33,7 +35,7 @@ fn main() {
     screen_width  := 800
     screen_height := 450
 
-    rl.init_window(screen_width, screen_height, "raylib [models] example - M3D model loading")
+    rl.init_window(screen_width, screen_height, 'raylib [models] example - M3D model loading')
     defer { rl.close_window() }             // Close window and OpenGL context
     
     // Define the camera to look into our 3d world
@@ -47,7 +49,7 @@ fn main() {
 
     mut position := rl.Vector3 {}           // Set model position
 
-    mut model_file_name := "resources/models/m3d/cesium_man.m3d"
+    mut model_file_name := asset_path+'models/m3d/cesium_man.m3d'
     mut draw_mesh       := true
     mut draw_skeleton   := true
     mut anim_playing    := false            // Store anim state, what to draw
@@ -123,7 +125,7 @@ fn main() {
 
                 // Draw the animated skeleton
                 // if draw_skeleton {
-                //     Loop to (boneCount - 1) because the last one is a special "no bone" bone,
+                //     Loop to (boneCount - 1) because the last one is a special 'no bone' bone,
                 //     needed to workaround buggy models
                 //     without a -1, we would always draw a cube at the origin
                 //     for i in 0..model.boneCount {
@@ -197,11 +199,11 @@ fn main() {
                 }
             }
         
-            rl.draw_text("PRESS SPACE to PLAY MODEL ANIMATION", 10, rl.get_screen_height() - 80, 10, rl.maroon)
-            rl.draw_text("PRESS N to STEP ONE ANIMATION FRAME", 10, rl.get_screen_height() - 60, 10, rl.darkgray)
-            rl.draw_text("PRESS C to CYCLE THROUGH ANIMATIONS", 10, rl.get_screen_height() - 40, 10, rl.darkgray)
-            rl.draw_text("PRESS M to toggle MESH, B to toggle SKELETON DRAWING", 10, rl.get_screen_height() - 20, 10, rl.darkgray)
-            rl.draw_text("(c) CesiumMan model by KhronosGroup", rl.get_screen_width() - 210, rl.get_screen_height() - 20, 10, rl.gray)
+            rl.draw_text('PRESS SPACE to PLAY MODEL ANIMATION', 10, rl.get_screen_height() - 80, 10, rl.maroon)
+            rl.draw_text('PRESS N to STEP ONE ANIMATION FRAME', 10, rl.get_screen_height() - 60, 10, rl.darkgray)
+            rl.draw_text('PRESS C to CYCLE THROUGH ANIMATIONS', 10, rl.get_screen_height() - 40, 10, rl.darkgray)
+            rl.draw_text('PRESS M to toggle MESH, B to toggle SKELETON DRAWING', 10, rl.get_screen_height() - 20, 10, rl.darkgray)
+            rl.draw_text('(c) CesiumMan model by KhronosGroup', rl.get_screen_width() - 210, rl.get_screen_height() - 20, 10, rl.gray)
 
         rl.end_drawing()
     }

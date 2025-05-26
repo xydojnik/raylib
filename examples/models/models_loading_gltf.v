@@ -25,6 +25,9 @@ module main
 import raylib as rl
 
 
+const asset_path = @VMODROOT+'/thirdparty/raylib/examples/models/resources/'
+
+
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
@@ -47,7 +50,7 @@ fn main() {
     }
 
     // Load gltf model
-    mut model := rl.Model.load('resources/models/gltf/robot.glb')
+    mut model := rl.Model.load(asset_path+'models/gltf/robot.glb')
     defer { model.unload() }
 
     println('MESH COUNT: ${model.meshCount}')
@@ -56,11 +59,11 @@ fn main() {
     mut anim_index         := u32(0)
     mut anim_current_frame := u32(0)
 
-    model_animations := rl.ModelAnimation.load('resources/models/gltf/robot.glb')
+    model_animations := rl.ModelAnimation.load(asset_path+'models/gltf/robot.glb')
     anims_count      := u32(model_animations.len)
     defer { model_animations.unload() }
 
-    position := rl.Vector3 {}   // Set model position
+    mut current_anim_name := unsafe { cstring_to_vstring(&model_animations[0].name[0]) }
 
     rl.disable_cursor()         // Limit cursor to relative movement inside the window
     rl.set_target_fps(60)       // Set our game to run at 60 frames-per-second
@@ -75,10 +78,16 @@ fn main() {
         // Select current animation
         if rl.is_mouse_button_pressed(rl.mouse_button_right) {
             anim_index = (anim_index+1)%anims_count
-            anim       = unsafe { model_animations[anim_index] }
+            unsafe {
+                anim              = model_animations[anim_index]
+                current_anim_name = cstring_to_vstring(&anim.name[0])
+            }
         } else if rl.is_mouse_button_pressed(rl.mouse_button_left) {
             anim_index = (anim_index+anims_count-1)%anims_count
-            anim       = unsafe { model_animations[anim_index] }
+            unsafe {
+                anim              = model_animations[anim_index]
+                current_anim_name = cstring_to_vstring(&anim.name[0])
+            }
         }
 
         // Update model animation
@@ -95,15 +104,15 @@ fn main() {
 
             rl.begin_mode_3d(camera)
 
-                rl.draw_model(model, position, 1.0, rl.white)    // Draw animated model
+                rl.draw_model(model, rl.Vector3{}, 1.0, rl.white)    // Draw animated model
                 rl.draw_grid(10, 1.0)
 
             rl.end_mode_3d()
 
             rl.draw_text('Use the LEFT/RIGHT mouse buttons to switch animation', 10, 10, 20, rl.gray)
+            rl.draw_text(current_anim_name, 10, rl.get_screen_height() - 50, 20, rl.black)
             rl.draw_text('Animation: ${anim.name}', 10, rl.get_screen_height() - 20, 10, rl.darkgray)
 
         rl.end_drawing()
-        //----------------------------------------------------------------------------------
     }
 }

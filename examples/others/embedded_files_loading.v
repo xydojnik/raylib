@@ -20,7 +20,8 @@ module main
 import raylib  as rl
 
 
-#include "@VMODROOT/examples/others/resources/audio_data.h" // Wave file exported with ExportWaveAsCode()
+#include "@VMODROOT/thirdparty/raylib/examples/others/resources/audio_data.h" // Wave file exported with ExportWaveAsCode()
+
 // Wave data information
 const audio_frame_count = u32(C.AUDIO_FRAME_COUNT)
 const audio_sample_rate = u32(C.AUDIO_SAMPLE_RATE)
@@ -29,7 +30,7 @@ const audio_channels    = u32(C.AUDIO_CHANNELS)
 const audio_data        = voidptr(C.AUDIO_DATA)
 
 
-#include "@VMODROOT/examples/others/resources/image_data.h" // Image file exported with ExportImageAsCode()
+#include "@VMODROOT/thirdparty/raylib/examples/others/resources/image_data.h" // Image file exported with ExportImageAsCode()
 // Image data information
 const image_width  = int(C.IMAGE_WIDTH)
 const image_height = int(C.IMAGE_HEIGHT)

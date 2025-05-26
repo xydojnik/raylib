@@ -52,6 +52,8 @@
 
 module math
 
+import raylib { Vector2, Vectro3, Vector4, Matrix }
+
 import math
 import rand
 
@@ -198,38 +200,38 @@ pub fn float_equals(x f32, y f32) bool {
 // Structures Definition
 //----------------------------------------------------------------------------------
 
-pub struct Vector2 {
-pub mut:
-	x f32       // Vector x component
-	y f32       // Vector y component
-}
+// pub struct Vector2 {
+// pub mut:
+// 	x f32       // Vector x component
+// 	y f32       // Vector y component
+// }
 
-// Vector3, 3 components
-pub struct Vector3 {
-pub mut:
-	x f32       // Vector x component
-	y f32       // Vector y component
-	z f32       // Vector z component
-}
+// // Vector3, 3 components
+// pub struct Vector3 {
+// pub mut:
+// 	x f32       // Vector x component
+// 	y f32       // Vector y component
+// 	z f32       // Vector z component
+// }
 
-// Vector4, 4 components
-pub struct Vector4 {
-pub mut:
-	x f32       // Vector x component
-	y f32       // Vector y component
-	z f32       // Vector z component
-	w f32       // Vector w component
-}
-pub type Quaternion = Vector4
+// // Vector4, 4 components
+// pub struct Vector4 {
+// pub mut:
+// 	x f32       // Vector x component
+// 	y f32       // Vector y component
+// 	z f32       // Vector z component
+// 	w f32       // Vector w component
+// }
+// pub type Quaternion = Vector4
                                                     
-// Matrix, 4x4 components, column major, OpenGL style, right-handed
-pub struct Matrix {
-pub mut:
-	m0  f32 m4  f32 m8  f32 m12 f32     // Matrix first row (4 components)
-	m1  f32 m5  f32 m9  f32 m13 f32     // Matrix second row (4 components)
-	m2  f32 m6  f32 m10 f32 m14 f32     // Matrix third row (4 components)
-	m3  f32 m7  f32 m11 f32 m15 f32     // Matrix fourth row (4 components)
-}
+// // Matrix, 4x4 components, column major, OpenGL style, right-handed
+// pub struct Matrix {
+// pub mut:
+// 	m0  f32 m4  f32 m8  f32 m12 f32     // Matrix first row (4 components)
+// 	m1  f32 m5  f32 m9  f32 m13 f32     // Matrix second row (4 components)
+// 	m2  f32 m6  f32 m10 f32 m14 f32     // Matrix third row (4 components)
+// 	m3  f32 m7  f32 m11 f32 m15 f32     // Matrix fourth row (4 components)
+// }
 
 
 //----------------------------------------------------------------------------------

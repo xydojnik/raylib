@@ -7,7 +7,7 @@
 *   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
 *   BSD-like license that allows static linking with closed source software
 *
-*   Copyright           (c) 2019-2023 Ramon Santamaria  (@raysan5)
+*   Copyright           (c) 2019-2023 Ramon Santamaria (@raysan5)
 *   Translated&Modified (c) 2024      Fedorov Alexandr (@xydojnik)
 *
 ********************************************************************************************/
@@ -16,6 +16,10 @@ module main
 
 
 import raylib as rl
+
+
+const asset_path = @VMODROOT+'/thirdparty/raylib/examples/models/resources/'
+
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -26,7 +30,7 @@ fn main() {
     screen_width  := 800
     screen_height := 450
 
-    rl.init_window(screen_width, screen_height, "raylib [models] example - first person maze")
+    rl.init_window(screen_width, screen_height, 'raylib [models] example - first person maze')
     defer { rl.close_window() }                // Close window and OpenGL context
 
     // Define the camera to look into our 3d world
@@ -40,16 +44,16 @@ fn main() {
     
     // mut position := rl.Vector3 {}            // Set model position
 
-    im_map   := rl.Image.load("resources/cubicmap.png") // Load cubicmap image (RAM)
-    cubicmap := rl.Texture.load_from_image(im_map)      // Convert image to texture to display (VRAM)
-    defer { cubicmap.unload() }                         // Unload cubicmap texture
+    im_map   := rl.Image.load(asset_path+'cubicmap.png') // Load cubicmap image (RAM)
+    cubicmap := rl.Texture.load_from_image(im_map)       // Convert image to texture to display (VRAM)
+    defer { cubicmap.unload() }                          // Unload cubicmap texture
 
     mesh := rl.gen_mesh_cubicmap(im_map, rl.Vector3 { 1.0, 1.0, 1.0 })
     mut model := rl.load_model_from_mesh(mesh)
-    defer { rl.unload_model(model) }                    // Unload map model
+    defer { rl.unload_model(model) }                     // Unload map model
     
     // NOTE: By default each cube is mapped to one part of texture atlas
-    texture := rl.Texture.load("resources/cubicmap_atlas.png")                   // Load map texture
+    texture := rl.Texture.load(asset_path+'cubicmap_atlas.png')                   // Load map texture
     defer  { texture.unload() }       // Unload map texture
     model.set_texture(0, rl.material_map_diffuse, texture) // Set map diffuse texture
 

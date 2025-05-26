@@ -24,6 +24,7 @@ module main
 
 import raylib as rl
 
+const asset_path   = @VMODROOT+'/thirdparty/raylib/examples/shaders/resources/'
 const glsl_version = $if PLATFORM_DESKTOP ? { 330 } $else { 100 }
 
 
@@ -50,10 +51,10 @@ fn main() {
         projection:  rl.camera_perspective          // Camera projection type
     }
 
-    mut model := rl.Model.load('resources/models/barracks.obj')         // Load OBJ model
+    mut model := rl.Model.load(asset_path+'models/barracks.obj')         // Load OBJ model
     defer { model.unload() }                                            // Unload model
 
-    texture := rl.Texture.load('resources/models/barracks_diffuse.png') // Load model texture (diffuse map)
+    texture := rl.Texture.load(asset_path+'models/barracks_diffuse.png') // Load model texture (diffuse map)
     defer { texture.unload() }                                          // Unload texture
 
     model.set_texture(0, rl.material_map_diffuse, texture)
@@ -62,7 +63,7 @@ fn main() {
 
     // Load postprocessing shader
     // NOTE: Defining unsafe{nil} or voidptr(0) for vertex shader forces usage of internal default vertex shader
-    shader := rl.Shader.load(voidptr(0), 'resources/shaders/glsl${glsl_version}/swirl.fs'.str)!
+    shader := rl.Shader.load(voidptr(0), (asset_path+'shaders/glsl${glsl_version}/swirl.fs').str)!
     defer { shader.unload() }                       // Unload shader
 
     // Get variable (uniform) location on the shader to connect with the program

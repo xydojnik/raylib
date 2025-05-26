@@ -7,7 +7,7 @@
 *   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
 *   BSD-like license that allows static linking with closed source software
 *
-*   Copyright           (c) 2015-2023 Ramon Santamaria  (@raysan5)
+*   Copyright           (c) 2015-2023 Ramon Santamaria (@raysan5)
 *   Translated&Modified (c) 2024      Fedorov Alexandr (@xydojnik)
 *
 ********************************************************************************************/
@@ -16,6 +16,9 @@ module main
 
 
 import raylib as rl
+
+
+const asset_path = @VMODROOT+'/thirdparty/raylib/examples/models/resources/'
 
 
 //------------------------------------------------------------------------------------
@@ -39,7 +42,7 @@ fn main() {
         projection : rl.camera_perspective           // Camera projection type
     }
 
-    image   := rl.Image.load('resources/heightmap.png')             // Load heightmap image (RAM)
+    image   := rl.Image.load(asset_path+'heightmap.png')             // Load heightmap image (RAM)
     texture := rl.Texture.load_from_image(image)                    // Convert image to texture (VRAM)
     defer { texture.unload() }                                      // Unload texture
 

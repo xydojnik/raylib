@@ -20,6 +20,9 @@ module main
 import raylib as rl
 
 
+const asset_path = @VMODROOT+'/thirdparty/raylib/examples/models/resources/'
+
+
 const flt_max = f32(340282346638528859811704183484516925440.0)     // Maximum value of a float, from bit pattern 01111111011111111111111111111111
 
 
@@ -46,10 +49,10 @@ fn main() {
 
     mut ray := rl.Ray {}                                                   // Picking ray
     
-    mut tower := rl.Model.load('resources/models/obj/turret.obj')          // Load OBJ model
+    mut tower := rl.Model.load(asset_path+'models/obj/turret.obj')         // Load OBJ model
     defer { tower.unload() }                                               // Unload model
 
-    texture := rl.Texture.load('resources/models/obj/turret_diffuse.png')  // Load model texture
+    texture := rl.Texture.load(asset_path+'models/obj/turret_diffuse.png') // Load model texture
     defer { texture.unload()  }                                            // Unload texture
 
     tower.set_texture(0, rl.material_map_diffuse, texture)                 // Set model diffuse texture

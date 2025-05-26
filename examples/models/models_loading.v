@@ -31,6 +31,9 @@ module main
 import raylib as rl
 
 
+const asset_path = @VMODROOT+'/thirdparty/raylib/examples/models/resources/'
+
+
 // TODO: Move camera position from target enough distance to visualize model properly | Done...?
 fn calculate_debug_sphere(bbox rl.BoundingBox) (rl.Vector3, f32) {
     bbox_center := rl.Vector3.scale(rl.Vector3.add(bbox.max, bbox.min), 0.5)
@@ -80,8 +83,8 @@ fn main() {
     }
     camera_offset := int(3)
 
-    model_file_path   := 'resources/models/obj/castle.obj'
-    texture_file_path := 'resources/models/obj/castle_diffuse.png'
+    model_file_path   := asset_path+'models/obj/castle.obj'
+    texture_file_path := asset_path+'models/obj/castle_diffuse.png'
     
     mut selected_model_name   := rl.get_file_name(model_file_path)
     mut selected_texture_name := rl.get_file_name(texture_file_path)
@@ -212,31 +215,43 @@ fn main() {
                 
                 padding := int(40)
                 texture_rec   := if half_screen {
-                    rl.Rectangle{ 0, padding, texture.width/10, texture.height/10 }
-                    // rl.Rectangle{ 0, padding, screen_width/2, screen_height-padding*2 }
+                    rl.Rectangle{ 10, padding, texture.width/10, texture.height/10 }
                 } else {
                     asspect_ratio := f32(texture.width)/f32(texture.height)
                     h := screen_height-padding*2
                     w := h*asspect_ratio
                     x := screen_width/2-w/2
                     rl.Rectangle{ x, padding, w, h }
-                    // rl.Rectangle{ 0, padding, screen_width, screen_height-padding*2 }
                 }
                 rl.draw_texture_pro(
                     texture,
                     rl.Rectangle{ 0, 0,texture.width, texture.height }, texture_rec,
                     rl.Vector2{}, 0.0, rl.white
                 )
-                if show_uv { model.draw_uv(0, 0, true, texture_rec, 1.0, rl.white) }
-                {
-                    txt       := if show_uv { 'Press SPACE:  Hide Model UV' } else {'Press SPACE: Show Model UV'}
-                    font_size := 20
-                    txt_width := rl.measure_text(txt.str, font_size)
-                    txt_rec   := rl.Vector2{ screen_width/2-txt_width/2, screen_height-int(f32(font_size)*1.5) }
-                    
-                    rl.draw_rectangle(int(txt_rec.x)-font_size/2, int(txt_rec.y), txt_width+font_size, font_size, rl.black)
-                    rl.draw_text(txt, int(txt_rec.x), int(txt_rec.y), font_size, if show_uv { rl.red } else { rl.green })
+
+                if half_screen {
+                    txt       := ' press 1 '
+                    txt_size  := 15
+                    txt_width := rl.measure_text(txt.str, txt_size)
+                    rl.draw_rectangle(
+                        int(texture_rec.x+20),
+                        int(texture_rec.y+texture_rec.height+3),
+                        txt_width, txt_size+4, rl.black.fade(0.5))
+                    rl.draw_text(
+                        'press 1',
+                        int(texture_rec.x+25),
+                        int(texture_rec.y+texture_rec.height+5),
+                        txt_size, rl.green)
                 }
+                
+                if show_uv { model.draw_uv(0, 0, true, texture_rec, 1.0, rl.white) }
+                txt       := if show_uv { 'Press SPACE:  Hide Model UV' } else {'Press SPACE: Show Model UV'}
+                font_size := 20
+                txt_width := rl.measure_text(txt.str, font_size)
+                txt_rec   := rl.Vector2{ screen_width/2-txt_width/2, screen_height-int(f32(font_size)*1.5) }
+
+                rl.draw_rectangle(int(txt_rec.x)-font_size/2, int(txt_rec.y), txt_width+font_size, font_size, rl.black.fade(0.7))
+                rl.draw_text(txt, int(txt_rec.x), int(txt_rec.y), font_size, if show_uv { rl.red } else { rl.green })
                 rl.draw_rectangle_lines_ex(texture_rec, 1, rl.red)
             } else {
                 rl.draw_text('MODEL: [ ${selected_model_name} ]', 10, 10, 25, rl.black)

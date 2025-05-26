@@ -10,8 +10,8 @@
 *   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
 *   BSD-like license that allows static linking with closed source software
 *
-*   Copyright           (c) 2020-2023 Ramon Santamaria  (@raysan5)
-*   Translated&Modified (c) 2024      Fedorov Alexandr (@xydojnik)
+*   Copyright           (c) 2020-2023 Ramon Santamaria (@raysan5)
+*   Translated&Modified (c) 2025      Fedorov Alexandr (@xydojnik)
 *
 ********************************************************************************************/
 
@@ -20,6 +20,7 @@ module main
 
 import raylib as rl
 
+const asset_path = @VMODROOT+'/thirdparty/raylib/examples/shaders/resources/'
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -33,7 +34,7 @@ fn main() {
     rl.init_window(screen_width, screen_height, 'raylib [shaders] example - hot reloading')
     defer { rl.close_window() }                 // Close window and OpenGL context
 
-    frag_shader_file_name := c'resources/shaders/glsl330/reload.fs'
+    frag_shader_file_name := (asset_path+'shaders/glsl330/reload.fs').str
     mut frag_shader_file_mod_time := rl.get_file_mod_time(frag_shader_file_name)
 
     // Load raymarching shader

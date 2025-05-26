@@ -50,6 +50,8 @@
 
 module main
 
+// NOTE: Not translated! WIP...
+
 // I dont want to do THIS!!!! NOT NOW. I am sory.
 
 
@@ -175,7 +177,7 @@ int main(void)
     rlViewport(0, 0, screenWidth, screenHeight);
     rlMatrixMode(RL_PROJECTION);                        // Switch to PROJECTION matrix
     rlLoadIdentity();                                   // Reset current matrix (PROJECTION)
-    rlOrtho(0, screenWidth, screenHeight, 0, 0.0f, 1.0f); // Orthographic projection with top-left corner at (0,0)
+    rlOrtho(0, screenWidth, screenHeight, 0, 0.0, 1.0f); // Orthographic projection with top-left corner at (0,0)
     rlMatrixMode(RL_MODELVIEW);                         // Switch back to MODELVIEW matrix
     rlLoadIdentity();                                   // Reset current matrix (MODELVIEW)
 

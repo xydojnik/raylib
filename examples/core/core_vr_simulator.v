@@ -17,6 +17,7 @@ module main
 
 import raylib as rl
 
+const asset_path   = @VMODROOT+'/thirdparty/raylib/examples/core/resources/'
 const glsl_version = 330
 
 // TODO: Not working at this time. Too lazy to fix.
@@ -31,7 +32,7 @@ fn main() {
     screen_height := 450
 
     // NOTE: screen_width/screen_height should match VR device aspect ratio
-    rl.init_window(screen_width, screen_height, "raylib [core] example - vr simulator")
+    rl.init_window(screen_width, screen_height, 'raylib [core] example - vr simulator')
     // De-Initialization
     //--------------------------------------------------------------------------------------
     defer { rl.close_window() }                  // Close window and OpenGL context
@@ -72,22 +73,22 @@ fn main() {
     //--------------------------------------------------------------------------------------
 
     // Distortion shader (uses device lens distortion and chroma)
-    distortion := rl.load_shader(voidptr(0), "resources/distortion${glsl_version}.fs".str)
+    distortion := rl.Shader.load(voidptr(0), (asset_path+'distortion${glsl_version}.fs').str)!
     // De-Initialization
     //--------------------------------------------------------------------------------------
     defer { rl.unload_shader(distortion) }      // Unload distortion shader
     //--------------------------------------------------------------------------------------
 
     // Update distortion shader with lens and distortion-scale parameters
-    rl.set_shader_value(distortion, rl.get_shader_location(distortion, "leftLensCenter"),    &config.leftLensCenter,    rl.shader_uniform_vec2)
-    rl.set_shader_value(distortion, rl.get_shader_location(distortion, "rightLensCenter"),   &config.rightLensCenter,   rl.shader_uniform_vec2)
-    rl.set_shader_value(distortion, rl.get_shader_location(distortion, "leftScreenCenter"),  &config.leftScreenCenter,  rl.shader_uniform_vec2)
-    rl.set_shader_value(distortion, rl.get_shader_location(distortion, "rightScreenCenter"), &config.rightScreenCenter, rl.shader_uniform_vec2)
+    rl.set_shader_value(distortion, rl.get_shader_location(distortion, 'leftLensCenter'),    &config.leftLensCenter,    rl.shader_uniform_vec2)
+    rl.set_shader_value(distortion, rl.get_shader_location(distortion, 'rightLensCenter'),   &config.rightLensCenter,   rl.shader_uniform_vec2)
+    rl.set_shader_value(distortion, rl.get_shader_location(distortion, 'leftScreenCenter'),  &config.leftScreenCenter,  rl.shader_uniform_vec2)
+    rl.set_shader_value(distortion, rl.get_shader_location(distortion, 'rightScreenCenter'), &config.rightScreenCenter, rl.shader_uniform_vec2)
 
-    rl.set_shader_value(distortion, rl.get_shader_location(distortion, "scale"),           &config.scale,                  rl.shader_uniform_vec2)
-    rl.set_shader_value(distortion, rl.get_shader_location(distortion, "scaleIn"),         &config.scaleIn,               rl.shader_uniform_vec2)
-    rl.set_shader_value(distortion, rl.get_shader_location(distortion, "deviceWarpParam"), &device.lensDistortionValues, rl.shader_uniform_vec4)
-    rl.set_shader_value(distortion, rl.get_shader_location(distortion, "chromaAbParam"),   &device.chromaAbCorrection,   rl.shader_uniform_vec4)
+    rl.set_shader_value(distortion, rl.get_shader_location(distortion, 'scale'),           &config.scale,                  rl.shader_uniform_vec2)
+    rl.set_shader_value(distortion, rl.get_shader_location(distortion, 'scaleIn'),         &config.scaleIn,               rl.shader_uniform_vec2)
+    rl.set_shader_value(distortion, rl.get_shader_location(distortion, 'deviceWarpParam'), &device.lensDistortionValues, rl.shader_uniform_vec4)
+    rl.set_shader_value(distortion, rl.get_shader_location(distortion, 'chromaAbParam'),   &device.chromaAbCorrection,   rl.shader_uniform_vec4)
 
     // Initialize framebuffer for stereo rendering
     // NOTE: Screen size should match HMD aspect ratio

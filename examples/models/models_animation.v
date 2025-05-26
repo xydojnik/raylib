@@ -9,7 +9,8 @@
 *   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
 *   BSD-like license that allows static linking with closed source software
 *
-*   Copyright (c) 2019-2023 Culacant (@culacant) and Ramon Santamaria (@raysan5)
+*   Copyright           (c) 2019-2023 Culacant         (@culacant) and Ramon Santamaria (@raysan5)
+*   Translated&Modified (c) 2024      Fedorov Alexandr (@xydojnik)
 *
 ********************************************************************************************
 *
@@ -17,7 +18,6 @@
 *         in the same position as they would be in edit mode and the scale of your models is 
 *         set to 0. Scaling can be done from the export menu.
 *
-*   Translated&Modified  (c) 2024      Fedorov Alexandr (@xydojnik)
 *
 ********************************************************************************************/
 
@@ -25,6 +25,9 @@ module main
 
 
 import raylib as rl
+
+
+const asset_path = @VMODROOT+'/thirdparty/raylib/examples/models/resources/'
 
 
 //------------------------------------------------------------------------------------
@@ -51,10 +54,10 @@ fn main() {
         projection:  rl.camera_perspective           // Camera mode type
     }
 
-    texture := rl.load_texture('resources/models/iqm/guytex.png') // Load model texture and set material
+    texture := rl.Texture.load(asset_path+'models/iqm/guytex.png') // Load model texture and set material
     defer { texture.unload() }
 
-    mut model := rl.load_model('resources/models/iqm/guy.iqm')    // Load the animated model mesh and basic data
+    mut model := rl.Model.load(asset_path+'models/iqm/guy.iqm')    // Load the animated model mesh and basic data
     defer { model.unload() }
     model.set_texture(0, rl.material_map_diffuse, texture)        // Set model material map texture
     model.transform = rl.Matrix.multiply(model.transform, rl.Matrix.rotate_x(rl.deg2rad(-90)))
@@ -62,7 +65,7 @@ fn main() {
     mut position := rl.Vector3 {}                                 // Set model position
 
     // Load animation data
-    anims := rl.ModelAnimation.load('resources/models/iqm/guyanim.iqm')
+    anims := rl.ModelAnimation.load(asset_path+'models/iqm/guyanim.iqm')
     defer { anims.unload() }
     
     mut anim_frame_counter := int(0)

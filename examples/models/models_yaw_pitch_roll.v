@@ -19,6 +19,8 @@ module main
 
 import raylib as rl
 
+const asset_path = @VMODROOT+'/thirdparty/raylib/examples/models/resources/'
+
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -30,7 +32,7 @@ fn main() {
     screen_height := 450
 
     //SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_WINDOW_HIGHDPI);
-    rl.init_window(screen_width, screen_height, "raylib [models] example - plane rotations (yaw, pitch, roll)")
+    rl.init_window(screen_width, screen_height, 'raylib [models] example - plane rotations (yaw, pitch, roll)')
     // De-Initialization
     //--------------------------------------------------------------------------------------
     defer { rl.close_window() }          // Close window and OpenGL context
@@ -44,8 +46,8 @@ fn main() {
         projection:  rl.camera_perspective            // Camera type
     }
 
-    mut model := rl.Model.load("resources/models/obj/plane.obj")           // Load model
-    texture   := rl.Texture.load("resources/models/obj/plane_diffuse.png") // Load model texture
+    mut model := rl.Model.load(asset_path+'models/obj/plane.obj')           // Load model
+    texture   := rl.Texture.load(asset_path+'models/obj/plane_diffuse.png') // Load model texture
     // De-Initialization
     //--------------------------------------------------------------------------------------
     defer {
@@ -117,11 +119,11 @@ fn main() {
             rl.draw_rectangle(30,       370, 260, 70, rl.Color.fade(rl.green,     0.5))
             rl.draw_rectangle_lines(30, 370, 260, 70, rl.Color.fade(rl.darkgreen, 0.5))
         
-            rl.draw_text("Pitch controlled with: KEY_UP / rl.key_down",      40, 380, 10, rl.darkgray)
-            rl.draw_text("Roll controlled with: rl.key_left / rl.key_right", 40, 400, 10, rl.darkgray)
-            rl.draw_text("Yaw controlled with: rl.key_a / rl.key_s",         40, 420, 10, rl.darkgray)
+            rl.draw_text('Pitch controlled with: KEY_UP / rl.key_down',      40, 380, 10, rl.darkgray)
+            rl.draw_text('Roll controlled with: rl.key_left / rl.key_right', 40, 400, 10, rl.darkgray)
+            rl.draw_text('Yaw controlled with: rl.key_a / rl.key_s',         40, 420, 10, rl.darkgray)
 
-            rl.draw_text("(c) WWI Plane Model created by GiaHanLam", screen_width - 240, screen_height - 20, 10, rl.darkgray)
+            rl.draw_text('(c) WWI Plane Model created by GiaHanLam', screen_width - 240, screen_height - 20, 10, rl.darkgray)
         
         rl.end_drawing()
     }

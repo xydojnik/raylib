@@ -18,6 +18,9 @@ module main
 import raylib as rl
 
 
+const asset_path = @VMODROOT+'/thirdparty/raylib/examples/models/resources/'
+
+
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
@@ -39,9 +42,9 @@ fn main() {
         projection:  rl.camera_perspective           // Camera projection type
     }
 
-    image    := rl.load_image('resources/cubicmap.png') // Load cubicmap image (RAM)
-    cubicmap := rl.load_texture_from_image(image)       // Convert image to texture to display (VRAM)
-    defer { rl.unload_texture(cubicmap) }               // Unload cubicmap texture
+    image    := rl.load_image(asset_path+'cubicmap.png') // Load cubicmap image (RAM)
+    cubicmap := rl.load_texture_from_image(image)        // Convert image to texture to display (VRAM)
+    defer { cubicmap.unload() }                          // Unload cubicmap texture
 
     mesh := rl.Mesh.gen_cubicmap(image, rl.Vector3 { 1.0, 1.0, 1.0 })
     mut model := rl.Model.load_from_mesh(mesh)
@@ -49,7 +52,7 @@ fn main() {
     image.unload()           // Unload cubesmap image from RAM, already uploaded to VRAM
 
     // NOTE: By default each cube is mapped to one part of texture atlas
-    texture := rl.Texture.load('resources/cubicmap_atlas.png') // Load map texture
+    texture := rl.Texture.load(asset_path+'cubicmap_atlas.png') // Load map texture
     defer { rl.unload_texture(texture) }                       // Unload map texture
     model.set_texture(0, rl.material_map_diffuse, texture)     // Set map diffuse texture
 

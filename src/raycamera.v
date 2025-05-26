@@ -20,7 +20,7 @@
 *
 *   LICENSE: zlib/libpng
 *
-*   Copyright (c) 2022-2023 Christoph Wagner (@Crydsch) & Ramon Santamaria (@raysan5)
+*   Copyright           (c) 2022-2023 Christoph Wagner  (@Crydsch) & Ramon Santamaria (@raysan5)
 *   Translated&Modified (c) 2024      Fedorov Aleksandr (@xydojnik)
 *
 *   This software is provided "as-is", without any express or implied warranty. In no event

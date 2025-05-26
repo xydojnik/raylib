@@ -17,6 +17,8 @@ module main
 
 import raylib as rl
 
+
+const asset_path = @VMODROOT+'/thirdparty/raylib/examples/models/resources/'
 const glsl_version = 330
 
 
@@ -46,31 +48,30 @@ fn main() {
     mut skybox := rl.Model.load_from_mesh(cube)
     defer { skybox.unload() }        // Unload skybox model
 
-    mut use_hdr   := true
+    mut use_hdr   := false
     mut do_gammma := false
     
     shader := rl.Shader.load(
-        'resources/shaders/glsl${glsl_version}/skybox.vs'.str,
-        'resources/shaders/glsl${glsl_version}/skybox.fs'.str
+        (asset_path+'shaders/glsl${glsl_version}/skybox.vs').str,
+        (asset_path+'shaders/glsl${glsl_version}/skybox.fs').str
     )!
     skybox.set_shader(0, shader)
 
-    shader.set_value1i(shader.get_loc('environmentMap'), rl.material_map_cubemap)
-    shader.set_value1i(shader.get_loc('doGamma'),        int(do_gammma))
-    shader.set_value1i(shader.get_loc('vflipped'),       int(use_hdr))
+    shader.set_value_1i(shader.get_loc('environmentMap'), rl.material_map_cubemap)
+    shader.set_value_1i(shader.get_loc('doGamma'),        int(do_gammma))
+    shader.set_value_1i(shader.get_loc('vflipped'),       int(use_hdr))
     
     // // Load cubemap shader and setup required shader locations
     shdr_cubemap := rl.load_shader(
-        'resources/shaders/glsl${glsl_version}/cubemap.vs'.str,
-        'resources/shaders/glsl${glsl_version}/cubemap.fs'.str
+        (asset_path+'shaders/glsl${glsl_version}/cubemap.vs').str,
+        (asset_path+'shaders/glsl${glsl_version}/cubemap.fs').str
     )
     rl.set_shader_value1i(shdr_cubemap, rl.get_shader_location(shdr_cubemap, 'equirectangularMap'),  0)
     
     mut skybox_file_name := ''
     
     if use_hdr {
-        // skybox_file_name = 'resources/dresden_square_2k.hdr' // it did'nt work
-        skybox_file_name = 'resources/dresden_square_2k.png'
+        skybox_file_name = asset_path+'dresden_square_2k.hdr' // it did'nt work
 
         // Load HDR panorama (sphere) texture
         panorama := rl.load_texture(skybox_file_name)
@@ -88,7 +89,7 @@ fn main() {
 
         rl.unload_texture(panorama)
     } else {
-        skybox_file_name = 'resources/skybox.png'
+        skybox_file_name = asset_path+'skybox.png'
         img := rl.load_image(skybox_file_name)
         skybox.set_texture(0, rl.material_map_cubemap, rl.Texture(rl.load_texture_cubemap(img, rl.cubemap_layout_auto_detect)))    // CUBEMAP_LAYOUT_PANORAMA
         img.unload()
@@ -166,9 +167,9 @@ fn main() {
 
             if use_hdr {
                 rl.draw_text(
-                    'Panorama image from hdrihaven.com: ${rl.get_file_name(skybox_file_name)}', 10, rl.get_screen_height() - 50, 20, rl.black)
+                    'Panorama image from hdrihaven.com: ${rl.get_file_name(skybox_file_name)}', 10, rl.get_screen_height() - 25, 20, rl.black)
             } else {
-                rl.draw_text(': ${rl.get_file_name(skybox_file_name)}', 10, rl.get_screen_height() - 50, 20, rl.black)
+                rl.draw_text('Image: ${rl.get_file_name(skybox_file_name)}', 10, rl.get_screen_height()-25, 20, rl.black)
             }
 
             rl.draw_fps(10, 10)

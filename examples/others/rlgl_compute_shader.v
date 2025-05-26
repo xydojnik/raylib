@@ -12,15 +12,20 @@
 *   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
 *   BSD-like license that allows static linking with closed source software
 *
-*   Copyright           (c) 2021-2023 Teddy Astie       (@tsnake41)
+*   Copyright           (c) 2021-2023 Teddy Astie      (@tsnake41)
 *   Translated&Modified (c) 2024      Fedorov Alexandr (@xydojnik)
 *
 ********************************************************************************************/
 
 module main
 
+// NOTE: Not working
 
 import raylib as rl
+
+
+const asset_path = @VMODROOT+'/thirdparty/raylib/examples/others/resources/'
+
 
 // It does not work as it should be.
 // You sould compile raylib with GRAPHICS_API_OPENGL_43 flag...
@@ -55,29 +60,29 @@ pub mut:
 fn main() {
     // Initialization
     //--------------------------------------------------------------------------------------
-    rl.init_window(gol_width, gol_width, "raylib [rlgl] example - compute shader - game of life")
+    rl.init_window(gol_width, gol_width, 'raylib [rlgl] example - compute shader - game of life')
     defer { rl.close_window() }                  // Close window and OpenGL context
     
     
     resolution := rl.Vector2 { gol_width, gol_width }
-    mut brush_size := u32(8)
+    mut brush_size := int(8)
 
     // Game of Life logic compute shader
-    // char *gol_logic_code = rl.load_file_text("resources/shaders/glsl430/gol.glsl")
-    gol_logic_code    := rl.load_file_text("resources/shaders/glsl430/gol.glsl")
+    // char *gol_logic_code = rl.load_file_text(asset_path+'shaders/glsl430/gol.glsl')
+    gol_logic_code    := rl.load_file_text(asset_path+'shaders/glsl430/gol.glsl')
     gol_logic_shader  := rl.rl_compile_shader(gol_logic_code, rl.rl_compute_shader)
     gol_logic_program := rl.rl_load_compute_shader_program(gol_logic_shader)
     rl.unload_file_text(gol_logic_code)
 
     // Game of Life logic render shader
-    gol_render_shader := rl.load_shader(unsafe { nil }, c"resources/shaders/glsl430/gol_render.glsl")
+    gol_render_shader := rl.load_shader(unsafe { nil }, (asset_path+'shaders/glsl430/gol_render.glsl').str)
     defer { rl.unload_shader(gol_render_shader) } // Unload rendering fragment shader
 
-    res_uniform_loc   := rl.get_shader_location(gol_render_shader, "resolution")
+    res_uniform_loc   := rl.get_shader_location(gol_render_shader, 'resolution')
 
     // Game of Life transfert shader (CPU<->GPU download and upload)
-    // char *gol_transfert_code = rl.load_file_text("resources/shaders/glsl430/gol_transfert.glsl")
-    gol_transfert_code    := rl.load_file_text("resources/shaders/glsl430/gol_transfert.glsl")
+    // char *gol_transfert_code = rl.load_file_text(asset_path+'shaders/glsl430/gol_transfert.glsl')
+    gol_transfert_code    := rl.load_file_text(asset_path+'shaders/glsl430/gol_transfert.glsl')
     gol_transfert_shader  := rl.rl_compile_shader(gol_transfert_code, rl.rl_compute_shader)
     gol_transfert_program := rl.rl_load_compute_shader_program(gol_transfert_shader)
     rl.unload_file_text(gol_transfert_code)
@@ -113,16 +118,16 @@ fn main() {
     for !rl.window_should_close() {
         // Update
         //----------------------------------------------------------------------------------
-        brush_size += u32(rl.get_mouse_wheel_move())
+        brush_size += int(rl.get_mouse_wheel_move())
 
         if (rl.is_mouse_button_down(rl.mouse_button_left)   ||
             rl.is_mouse_button_down(rl.mouse_button_right)) &&
             transfert_buffer.count < max_buffered_transferts
         {
             // Buffer a new command
-            transfert_buffer.commands[transfert_buffer.count].x       = u32(rl.get_mouse_x()) - brush_size/2
-            transfert_buffer.commands[transfert_buffer.count].y       = u32(rl.get_mouse_y()) - brush_size/2
-            transfert_buffer.commands[transfert_buffer.count].w       = brush_size
+            transfert_buffer.commands[transfert_buffer.count].x       = u32(rl.get_mouse_x() - brush_size/2)
+            transfert_buffer.commands[transfert_buffer.count].y       = u32(rl.get_mouse_y() - brush_size/2)
+            transfert_buffer.commands[transfert_buffer.count].w       = u32(brush_size)
             transfert_buffer.commands[transfert_buffer.count].enabled = rl.is_mouse_button_down(rl.mouse_button_left)
             transfert_buffer.count++
         } else if transfert_buffer.count > 0 { // Process transfert buffer
@@ -165,9 +170,9 @@ fn main() {
                 rl.draw_texture(white_tex, 0, 0, rl.white)
             rl.end_shader_mode()
 
-            rl.draw_rectangle_lines(rl.get_mouse_x() - brush_size/2, rl.get_mouse_y() - brush_size/2, brush_size, brush_size, rl.red)
+        rl.draw_rectangle_lines(rl.get_mouse_x() - brush_size/2, rl.get_mouse_y() - brush_size/2, brush_size, brush_size, rl.red)
 
-            rl.draw_text("Use Mouse wheel to increase/decrease brush size", 10, 10, 20, rl.white)
+            rl.draw_text('Use Mouse wheel to increase/decrease brush size', 10, 10, 20, rl.white)
             rl.draw_fps(rl.get_screen_width() - 100, 10)
 
         rl.end_drawing()

@@ -9,7 +9,7 @@
 *   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
 *   BSD-like license that allows static linking with closed source software
 *
-*   Copyright           (c) 2021-2023 Johann Nadalutti  (@procfxgen) and Ramon Santamaria (@raysan5)
+*   Copyright           (c) 2021-2023 Johann Nadalutti (@procfxgen) and Ramon Santamaria (@raysan5)
 *   Translated&Modified (c) 2024      Fedorov Alexandr (@xydojnik)
 *
 ********************************************************************************************/
@@ -18,6 +18,9 @@ module main
 
 
 import raylib as rl
+
+
+const asset_path = @VMODROOT+'/thirdparty/raylib/examples/models/resources/'
 
 // const max_vox_files = 3
 
@@ -31,14 +34,14 @@ fn main() {
     screen_height := 450
 
     vox_file_names := [
-        "resources/models/vox/chr_knight.vox",
-        "resources/models/vox/chr_sword.vox",
-        "resources/models/vox/monu9.vox"
+        'models/vox/chr_knight.vox',
+        'models/vox/chr_sword.vox',
+        'models/vox/monu9.vox'
     ]!
 
     mut load_times := [3]f32{}
 
-    rl.init_window(screen_width, screen_height, "raylib [models] example - magicavoxel loading")
+    rl.init_window(screen_width, screen_height, 'raylib [models] example - magicavoxel loading')
     defer { rl.close_window()  }        // Close window and OpenGL context
 
     // Define the camera to look into our 3d world
@@ -53,22 +56,22 @@ fn main() {
     // Load MagicaVoxel files
     mut models := []rl.Model { len: vox_file_names.len }
     // Unload models data (GPU VRAM)
-    defer { for model in models { rl.unload_model(model) } }
+    defer { for model in models { model.unload() } }
 
     // load Models
     for i, mut model in models {
         // Load VOX file and measure time
-        file_name := vox_file_names[i]
+        file_name := asset_path+vox_file_names[i]
         
         t0 := rl.get_time()*1000.0
-            model = rl.load_model(file_name)
+            model = rl.Model.load(file_name)
         t1 := rl.get_time()*1000.0
 
         load_time := t1-t0
         load_times[i] = f32(load_time)
 
-        // TraceLog(LOG_WARNING, TextFormat("[%s] File loaded in %.3f ms", vox_file_names[i], t1 - t0))
-        println("[$[file_name]] File loaded in ${load_time} ms")
+        // TraceLog(LOG_WARNING, TextFormat('[%s] File loaded in %.3f ms', vox_file_names[i], t1 - t0))
+        println('[$[file_name]] File loaded in ${load_time} ms')
 
         // Compute model translation matrix to center model on draw position (0, 0 , 0)
         bb := rl.get_model_bounding_box(models[i])
@@ -78,7 +81,7 @@ fn main() {
             bb.min.z  + ((bb.max.z - bb.min.z)/2)
         }
 
-        mat_translate := rl.Matrix.translate(-center.x, 0, -center.z)
+        mat_translate := rl.Matrix.translate(rl.Vector3{-center.x, 0, -center.z})
         model.transform = mat_translate
     }
 
@@ -129,8 +132,8 @@ fn main() {
             // Display info
             rl.draw_rectangle(10, 400, 310, 30, rl.Color.fade(rl.skyblue, 0.5))
             rl.draw_rectangle_lines(10, 400, 310, 30, rl.Color.fade(rl.darkblue, 0.5))
-            rl.draw_text("MOUSE LEFT BUTTON to CYCLE VOX MODELS", 40, 410, 10, rl.blue)
-            rl.draw_text("File: ${rl.get_file_name(vox_file_names[current_model])}, loaded: ${load_times[current_model]} ms", 10, 10, 20, rl.gray)
+            rl.draw_text('MOUSE LEFT BUTTON to CYCLE VOX MODELS', 40, 410, 10, rl.blue)
+            rl.draw_text('File: ${rl.get_file_name(vox_file_names[current_model])}, loaded: ${load_times[current_model]} ms', 10, 10, 20, rl.gray)
 
         rl.end_drawing()
         //----------------------------------------------------------------------------------

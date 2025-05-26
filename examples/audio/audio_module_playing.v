@@ -17,7 +17,7 @@ module main
 
 import raylib as rl
 
-
+const asset_path  = @VMODROOT+'/thirdparty/raylib/examples/audio/resources/'
 const max_circles = 64
 
 
@@ -40,9 +40,9 @@ fn main() {
     screen_width  := 800
     screen_height := 450
 
-    rl.set_config_flags(rl.flag_msaa_4x_hint  // NOTE: Try to enable MSAA 4X
+    rl.set_config_flags(rl.flag_msaa_4x_hint) // NOTE: Try to enable MSAA 4X
 
-    rl.init_window(screen_width, screen_height, "raylib [audio] example - module playing (streaming)")
+    rl.init_window(screen_width, screen_height, 'raylib [audio] example - module playing (streaming)')
     // De-Initialization
     //--------------------------------------------------------------------------------------
     defer { rl.close_window() }         // Close window and OpenGL context
@@ -73,7 +73,7 @@ fn main() {
         circle.color      = colors[rl.get_random_value(0, 13)]
     }
 
-    mut music := rl.load_music_stream("resources/mini1111.xm")
+    mut music := rl.load_music_stream(asset_path+'mini1111.xm')
     // De-Initialization
     //--------------------------------------------------------------------------------------
     defer { rl.unload_music_stream(music) }         // Unload music stream buffers from RAM
@@ -113,6 +113,8 @@ fn main() {
 
         if      rl.is_key_down(rl.key_down) { pitch -= 0.01 }
         else if rl.is_key_down(rl.key_up)   { pitch += 0.01 }
+
+        pitch = rl.clamp(pitch, f32(0), f32(10))
 
         rl.set_music_pitch(music, pitch)
 
@@ -159,10 +161,10 @@ fn main() {
             // Draw help instructions
             rl.draw_rectangle(20, 20, 425, 145, rl.white)
             rl.draw_rectangle_lines(20, 20, 425, 145, rl.gray)
-            rl.draw_text("PRESS SPACE TO RESTART MUSIC",  40, 40 , 20, rl.black)
-            rl.draw_text("PRESS P TO PAUSE/RESUME",       40, 70 , 20, rl.black)
-            rl.draw_text("PRESS UP/DOWN TO CHANGE SPEED", 40, 100, 20, rl.black)
-            rl.draw_text("SPEED: ${pitch}",               40, 130, 20, rl.maroon)
+            rl.draw_text('PRESS SPACE TO RESTART MUSIC',  40, 40 , 20, rl.black)
+            rl.draw_text('PRESS P TO PAUSE/RESUME',       40, 70 , 20, rl.black)
+            rl.draw_text('PRESS UP/DOWN TO CHANGE SPEED', 40, 100, 20, rl.black)
+            rl.draw_text('SPEED: ${pitch}',               40, 130, 20, rl.maroon)
 
         rl.end_drawing()
         //----------------------------------------------------------------------------------

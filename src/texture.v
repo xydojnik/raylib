@@ -40,7 +40,7 @@ pub mut:
 }
 
 pub type Texture   = C.Texture
-pub type Texture2D = C.Texture
+pub type Texture2D = C.Texture // What is a point of Texture2D?
 
 
 
@@ -69,12 +69,6 @@ pub fn Texture.get_default() Texture {
         mipmaps: 1
     }
 }
-
-pub fn (t Texture) set_slot(slot int) {
-    rl_active_texture_slot(slot)
-    rl_enable_texture(t.id)
-}
-
 
 @[inline]                                                    
 pub fn Texture.is_valid(t Texture, ) bool {
@@ -144,9 +138,12 @@ pub fn Texture.unload(t Texture) {
 
 
 
-
-
 // Struct methods
+pub fn (t Texture) set_slot(slot int) {
+    rl_active_texture_slot(slot)
+    rl_enable_texture(t.id)
+}
+
 @[inline]
 pub fn (t Texture) to_image() Image {
 	return C.LoadImageFromTexture(t)
@@ -215,8 +212,6 @@ pub fn (t Texture) draw_npatch(npatch_info NPatchInfo, dest Rectangle, origin Ve
 @[inline]
 pub fn (t Texture) unload() { C.UnloadTexture(t) }
 // Texture functions
-
-
 
 
 

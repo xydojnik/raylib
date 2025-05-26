@@ -57,41 +57,6 @@ pub const shader_attrib_vec3  = C.SHADER_ATTRIB_VEC3  // Shader attribute type: 
 pub const shader_attrib_vec4  = C.SHADER_ATTRIB_VEC4  // Shader attribute type: vec4 (4 float)
 
 
-// // TODO: Convert gltype to vlang type.
-// pub fn Shader.gl_to_rl_type[T] (gl_type int) T {
-//     return match gl_type {
-//         shader_uniform_float      { f32     }
-//         shader_uniform_vec2       { Vector2 }
-//         shader_uniform_ivec2      { Vector2 }
-//         shader_uniform_vec3       { Vector3 }
-//         shader_uniform_vec4       { Vector4 }
-//         shader_uniform_int        { int     }
-//         shader_uniform_ivec3      { Vector3 }
-//         shader_uniform_ivec4      { Vector4 }
-//         shader_uniform_sampler_2d { Texture }
-//         else { panic('Wrong Shader uniform type: [ ${gl_type }]') }
-//     }
-// }
-
-// // TODO: Convert rltype to gltype.
-// pub fn Shader.rl_to_gl_type[T] () int {
-//     val := T{}
-//     type_name := typeof(val).name
-//     return match type_name {
-//         "f32"            { shader_uniform_float }
-//         "raylib.Vector2" { shader_uniform_vec2  }
-//         "raylib.Vector3" { shader_uniform_vec3  }
-//         "raylib.Vector4" { shader_uniform_vec4  }
-//         "int"            { shader_uniform_int   }
-//         // "Vector2" { shader_uniform_ivec2 }
-//         // "Vector3" { shader_uniform_ivec3 }
-//         // "Vector4" { shader_uniform_ivec4 }
-//         "raylib.Texture" { shader_uniform_sampler_2d }
-//         else { panic('Wrong Shader uniform type: [ ${type_name}]') }
-//     }
-// }
-
-
 // Shader
 @[typedef]
 struct C.Shader {
@@ -181,11 +146,6 @@ pub fn (s Shader) set_value_matrix(loc_index int, mat Matrix) {
 pub fn (s Shader) set_value_texture(loc_index int, texture Texture) {
 	C.SetShaderValueTexture(s, loc_index, texture)
 }
-
-// @[inline]
-// pub fn (s Shader) set_loc(loc_index int, loc int) {
-//     s.locs[loc_index] = loc
-// }
 
 @[inline]
 pub fn (s Shader) get_loc(uniform_name string) int {

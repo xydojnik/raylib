@@ -19,7 +19,7 @@ module main
 
 import raylib as rl
 
-#include "@VMODROOT/examples/others/reasings.h"
+#include "@VMODROOT/thirdparty/raylib/examples/others/reasings.h"
 
 // Linear Easing functions
 fn C.EaseLinearNone (t f32, b f32, c f32, d f32) f32  // Ease: Linear

@@ -19,7 +19,7 @@ pub type Image = C.Image
 pub fn Image.load(file_name string) Image {
 	img := C.LoadImage(file_name.str)
     // if !img.is_valid() {
-    //     return error('IMAGE: ERROR Could not create Image: [ ${file_name} ]')
+    //     return error('IMAGE: ERROR Could not load Image: [ ${file_name} ]')
     // }
     return img
 }
@@ -33,10 +33,6 @@ pub fn Image.load_raw(file_name string, width int, height int, format int, heade
 pub fn Image.load_anim(file_name string, frames &int) Image {
 	return C.LoadImageAnim(file_name.str, frames)
 }
-
-// pub fn Image.load_from_memory(file_type string, file_data &u8, data_size int) Image {
-// 	return C.LoadImageFromMemory(file_type.str, file_data, data_size)
-// }
 
 @[inline]
 pub fn Image.from_texture(texture Texture) Image {
@@ -110,6 +106,7 @@ pub fn Image.gen_text(width int, height int, text string) Image {
 // Generate Image
 
 
+// V like methods.
 @[inline]
 pub fn (img Image) copy() Image {
 	return C.ImageCopy(img)
@@ -271,11 +268,6 @@ pub fn (img Image) load_palette(max_palette_size int) []Color {
     return ptr_arr_to_varr[Color](carr, color_count)
 }
 
-
-// @[inline]
-// pub fn (colors []Color) unload_colors() {
-// 	C.UnloadImageColors(colors.data)
-// }
 
 @[inline]
 pub fn (colors []Color) unload_palette() {

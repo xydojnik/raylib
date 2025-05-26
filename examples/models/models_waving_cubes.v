@@ -93,7 +93,7 @@ fn main() {
                             }
 
                             // Pick a color with a hue depending on cube position for the rainbow color effect
-                            cube_color := rl.color_from_hsv(f32(((x + y + z)*18)%360), 0.75, 0.9)
+                            cube_color := rl.Color.from_hsv(f32(((x + y + z)*18)%360), 0.75, 0.9)
 
                             // Calculate cube size
                             cube_size := f32((2.4 - scale)*block_scale)

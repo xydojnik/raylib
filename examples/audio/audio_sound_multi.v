@@ -7,7 +7,7 @@
 *   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
 *   BSD-like license that allows static linking with closed source software
 *
-*   Copyright           (c) 2023 Jeffery Myers     (@JeffM2501)
+*   Copyright           (c) 2023 Jeffery Myers    (@JeffM2501)
 *   Translated&Modified (c) 2024 Fedorov Alexandr (@xydojnik)
 *
 ********************************************************************************************/
@@ -16,6 +16,8 @@ module main
 
 
 import raylib as rl
+
+const asset_path = @VMODROOT+'/thirdparty/raylib/examples/audio/resources/'
 
 
 //------------------------------------------------------------------------------------
@@ -27,7 +29,7 @@ fn main() {
     screen_width  := 800
     screen_height := 450
 
-    rl.init_window(screen_width, screen_height, "raylib [audio] example - playing sound multiple times")
+    rl.init_window(screen_width, screen_height, 'raylib [audio] example - playing sound multiple times')
     defer { rl.close_window() }
 
     rl.init_audio_device()                                        // Initialize audio device
@@ -36,7 +38,7 @@ fn main() {
     max_sounds := 10
     mut sound_array := []rl.Sound { len: max_sounds }
 
-    sound_array[0] = rl.load_sound("resources/sound.wav")         // Load WAV audio file into the first slot as the 'source' sound
+    sound_array[0] = rl.load_sound(asset_path+'sound.wav')         // Load WAV audio file into the first slot as the 'source' sound
     for i in 0..sound_array.len {                                 // this sound owns the sample data
         sound_array[i] = rl.load_sound_alias(sound_array[0])      // Load an alias of the sound into slots 1-9. These do not own the sound data, but can be played
     }
@@ -69,7 +71,7 @@ fn main() {
 
             rl.clear_background(rl.raywhite)
 
-            rl.draw_text("Press SPACE to PLAY a WAV sound!", 200, 180, 20, rl.lightgray)
+            rl.draw_text('Press SPACE to PLAY a WAV sound!', 200, 180, 20, rl.lightgray)
 
         rl.end_drawing()
     }

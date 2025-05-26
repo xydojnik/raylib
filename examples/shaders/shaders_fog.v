@@ -13,7 +13,7 @@
 *   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
 *   BSD-like license that allows static linking with closed source software
 *
-*   Copyright           (c) 2019-2023 Chris Camacho     (@chriscamacho) and Ramon Santamaria (@raysan5)
+*   Copyright           (c) 2019-2023 Chris Camacho    (@chriscamacho) and Ramon Santamaria (@raysan5)
 *   Translated&Modified (c) 2024      Fedorov Alexandr (@xydojnik)
 *
 ********************************************************************************************/
@@ -22,6 +22,7 @@ module main
 
 import raylib as rl
 
+const asset_path = @VMODROOT+'/thirdparty/raylib/examples/shaders/resources/'
 
 // Program main entry point
 fn main() {
@@ -47,7 +48,7 @@ fn main() {
     mut model_b := rl.Model.load_from_mesh(rl.Mesh.gen_cube(1.0, 1.0, 1.0))
     mut model_c := rl.Model.load_from_mesh(rl.Mesh.gen_sphere(0.5, 32, 32))
     
-    texture := rl.Texture.load('resources/texel_checker.png')
+    texture := rl.Texture.load(asset_path+'texel_checker.png')
     
     defer {
         rl.unload_model(model_a)        // Unload the model A
@@ -63,8 +64,8 @@ fn main() {
 
     // Load shader and set up some uniforms
     shader := rl.Shader.load(
-        c'resources/shaders/glsl330/lighting.vs',
-        c'resources/shaders/glsl330/fog.fs'
+        (asset_path+'shaders/glsl330/lighting.vs').str,
+        (asset_path+'shaders/glsl330/fog.fs').str
     )!
     defer { shader.unload() }           // Unload shader   
     

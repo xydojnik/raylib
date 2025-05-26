@@ -9,7 +9,7 @@
 *   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
 *   BSD-like license that allows static linking with closed source software
 *
-*   Copyright           (c) 2023 hkc               (@hatkidchan)
+*   Copyright           (c) 2023 hkc              (@hatkidchan)
 *   Translated&Modified (c) 2024 Fedorov Alexandr (@xydojnik)
 *
 ********************************************************************************************/
@@ -19,6 +19,7 @@ module main
 
 import raylib as rl
 
+const asset_path = @VMODROOT+'/thirdparty/raylib/examples/audio/resources/'
 
 __global (
     exponent       = f32(1.0)           // Audio exponentiation value
@@ -62,7 +63,7 @@ fn main() {
     screen_width  := 800
     screen_height := 450
 
-    rl.init_window(screen_width, screen_height, "raylib [audio] example - processing mixed output")
+    rl.init_window(screen_width, screen_height, 'raylib [audio] example - processing mixed output')
     defer { rl.close_window() }                              // Close window and OpenGL context
 
     rl.init_audio_device()                                   // Initialize audio device
@@ -71,10 +72,10 @@ fn main() {
     rl.attach_audio_mixed_processor(process_audio)
     defer { rl.detach_audio_mixed_processor(process_audio) } // Disconnect audio processor
 
-    music := rl.load_music_stream("resources/country.mp3")
+    music := rl.load_music_stream(asset_path+'country.mp3')
     defer { rl.unload_music_stream(music) }                  // Unload music stream buffers from RAM
     
-    sound := rl.load_sound("resources/coin.wav")
+    sound := rl.load_sound(asset_path+'coin.wav')
 
     rl.play_music_stream(music)
 
@@ -103,8 +104,8 @@ fn main() {
 
             rl.clear_background(rl.raywhite)
 
-            rl.draw_text("MUSIC SHOULD BE PLAYING!", 255, 150, 20, rl.lightgray)
-            rl.draw_text("EXPONENT = ${exponent}",   215, 180, 20, rl.lightgray)
+            rl.draw_text('MUSIC SHOULD BE PLAYING!', 255, 150, 20, rl.lightgray)
+            rl.draw_text('EXPONENT = ${exponent}',   215, 180, 20, rl.lightgray)
 
             rl.draw_rectangle(199, 199, 402, 34, rl.lightgray)
 
@@ -113,8 +114,8 @@ fn main() {
             }
             rl.draw_rectangle_lines(199, 199, 402, 34, rl.gray)
 
-            rl.draw_text("PRESS SPACE TO PLAY OTHER SOUND",               200, 250, 20, rl.lightgray)
-            rl.draw_text("USE LEFT AND RIGHT ARROWS TO ALTER DISTORTION", 140, 280, 20, rl.lightgray)
+            rl.draw_text('PRESS SPACE TO PLAY OTHER SOUND',               200, 250, 20, rl.lightgray)
+            rl.draw_text('USE LEFT AND RIGHT ARROWS TO ALTER DISTORTION', 140, 280, 20, rl.lightgray)
 
         rl.end_drawing()
     }

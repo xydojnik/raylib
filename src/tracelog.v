@@ -1,5 +1,6 @@
 module raylib
 
+// NOTE: Not working.
 
 // Trace log level
 // NOTE: Organized by priority level

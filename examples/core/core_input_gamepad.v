@@ -23,9 +23,11 @@ module main
 
 import raylib as rl
 
-const xbox360_legacy_name_id = "Xbox Controller"
-const xbox360_name_id        = "Xbox 360 Controller"
-const ps3_name_id            = "PLAYSTATION(R)3 Controller"
+const asset_path = @VMODROOT+'/thirdparty/raylib/examples/core/resources/'
+
+const xbox360_legacy_name_id = 'Xbox Controller'
+const xbox360_name_id        = 'Xbox 360 Controller'
+const ps3_name_id            = 'PLAYSTATION(R)3 Controller'
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -38,15 +40,15 @@ fn main() {
 
     rl.set_config_flags(rl.flag_msaa_4x_hint)  // Set MSAA 4X hint before windows creation
 
-    rl.init_window(screen_width, screen_height, "raylib [core] example - gamepad input")
+    rl.init_window(screen_width, screen_height, 'raylib [core] example - gamepad input')
 
     // De-Initialization
     //--------------------------------------------------------------------------------------
     defer { rl.close_window() }       // Close window and OpenGL context
     //--------------------------------------------------------------------------------------
 
-    tex_ps3_pad  := rl.load_texture("resources/ps3.png")
-    tex_xbox_pad := rl.load_texture("resources/xbox.png")
+    tex_ps3_pad  := rl.Texture.load(asset_path+'ps3.png')
+    tex_xbox_pad := rl.Texture.load(asset_path+'xbox.png')
     // De-Initialization
     //--------------------------------------------------------------------------------------
     defer { rl.unload_texture(tex_ps3_pad) }
@@ -75,7 +77,7 @@ fn main() {
             if rl.is_key_pressed(rl.key_right)               { gamepad++ }
 
             if rl.is_gamepad_available(gamepad) {
-                rl.draw_text("GP(${gamepad}): ${rl.get_gamepad_name(gamepad)}", 10, 10, 10, rl.black)
+                rl.draw_text('GP(${gamepad}): ${rl.get_gamepad_name(gamepad)}', 10, 10, 10, rl.black)
 
                 if true {
                     rl.draw_texture(tex_xbox_pad, 0, 0, rl.darkgray)
@@ -141,8 +143,8 @@ fn main() {
                     rl.draw_rectangle(170, 30, 15, int(((1 + rl.get_gamepad_axis_movement(gamepad, rl.gamepad_axis_left_trigger)) /2)*70), rl.red)
                     rl.draw_rectangle(604, 30, 15, int(((1 + rl.get_gamepad_axis_movement(gamepad, rl.gamepad_axis_right_trigger))/2)*70), rl.red)
 
-                    rl.draw_text("Xbox axis LT: ${rl.get_gamepad_axis_movement(gamepad, rl.gamepad_axis_left_trigger)}",  10, screen_height-60, 10, rl.red)
-                    rl.draw_text("Xbox axis RT: ${rl.get_gamepad_axis_movement(gamepad, rl.gamepad_axis_right_trigger)}", 10, screen_height-40, 10, rl.red)
+                    rl.draw_text('Xbox axis LT: ${rl.get_gamepad_axis_movement(gamepad, rl.gamepad_axis_left_trigger)}',  10, screen_height-60, 10, rl.red)
+                    rl.draw_text('Xbox axis RT: ${rl.get_gamepad_axis_movement(gamepad, rl.gamepad_axis_right_trigger)}', 10, screen_height-40, 10, rl.red)
                 } else if rl.get_gamepad_name(gamepad) == ps3_name_id {
                     rl.draw_texture(tex_ps3_pad, 0, 0, rl.darkgray)
 
@@ -202,27 +204,26 @@ fn main() {
                     rl.draw_rectangle(169, 48, 15, int(((1 - rl.get_gamepad_axis_movement(gamepad, rl.gamepad_axis_left_trigger))  / 2) * 70), rl.red)
                     rl.draw_rectangle(611, 48, 15, int(((1 - rl.get_gamepad_axis_movement(gamepad, rl.gamepad_axis_right_trigger)) / 2) * 70), rl.red)
                 } else {
-                    rl.draw_text("- GENERIC GAMEPAD -", 280, 180, 20, rl.gray)
+                    rl.draw_text('- GENERIC GAMEPAD -', 280, 180, 20, rl.gray)
                     // TODO: Draw generic gamepad
                 }
 
-                rl.draw_text("DETECTED AXIS [${rl.get_gamepad_axis_count(0)}]:", 10, 50, 10, rl.maroon)
+                rl.draw_text('DETECTED AXIS [${rl.get_gamepad_axis_count(0)}]:', 10, 50, 10, rl.maroon)
 
                 for i in 0..rl.get_gamepad_axis_count(0) {
-                    rl.draw_text("AXIS ${i}: ${rl.get_gamepad_axis_movement(0, i)}", 20, 70 + 20*i, 10, rl.darkgray)
+                    rl.draw_text('AXIS ${i}: ${rl.get_gamepad_axis_movement(0, i)}', 20, 70 + 20*i, 10, rl.darkgray)
                 }
 
                 if rl.get_gamepad_button_pressed() != rl.gamepad_button_unknown {
-                    rl.draw_text("DETECTED BUTTON: ${rl.get_gamepad_button_pressed()}", 10, 430, 10, rl.red)
+                    rl.draw_text('DETECTED BUTTON: ${rl.get_gamepad_button_pressed()}', 10, 430, 10, rl.red)
                 } else {
-                    rl.draw_text("DETECTED BUTTON: NONE", 10, 430, 10, rl.gray)
+                    rl.draw_text('DETECTED BUTTON: NONE', 10, 430, 10, rl.gray)
                 }
             } else {
-                rl.draw_text("GP${gamepad}: NOT DETECTED", 10, 10, 10, rl.gray)
+                rl.draw_text('GP${gamepad}: NOT DETECTED', 10, 10, 10, rl.gray)
                 rl.draw_texture(tex_xbox_pad, 0, 0, rl.lightgray)
             }
 
         rl.end_drawing()
-        //----------------------------------------------------------------------------------
     }
 }

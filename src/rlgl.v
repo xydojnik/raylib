@@ -1,5 +1,4 @@
 /**********************************************************************************************
-pnp
 *   rlgl v4.5 - A multi-OpenGL abstraction layer with an immediate-mode style API
 *
 *   DESCRIPTION:
