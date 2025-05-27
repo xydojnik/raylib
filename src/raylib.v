@@ -3435,35 +3435,6 @@ pub fn gen_mesh_cubicmap(cubicmap Image, cube_size Vector3) Mesh {
 	return C.GenMeshCubicmap(cubicmap, cube_size)
 }
 
-fn C.LoadMaterials(file_name &char, material_count &int) &Material
-@[inline]
-pub fn load_materials(file_name string, material_count &int) &Material {
-	return C.LoadMaterials(file_name.str, material_count)
-}
-
-fn C.LoadMaterialDefault() Material
-@[inline]
-pub fn load_material_default() Material {
-	return C.LoadMaterialDefault()
-}
-
-fn C.UnloadMaterial(material Material)
-@[inline]
-pub fn unload_material(material Material) {
-	C.UnloadMaterial(material)
-}
-
-fn C.SetMaterialTexture(material &Material, map_type int, texture Texture)
-@[inline]
-pub fn set_material_texture(material &Material, map_type int, texture Texture) {
-	C.SetMaterialTexture(material, map_type, texture)
-}
-
-fn C.SetModelMeshMaterial(model &Model, meshId int, materialId int)
-@[inline]
-pub fn set_model_mesh_material(model &Model, meshId int, materialId int) {
-	C.SetModelMeshMaterial(model, meshId, materialId)
-}
 
 fn C.LoadModelAnimations(file_name &char, anim_count &u32) &ModelAnimation
 @[inline]

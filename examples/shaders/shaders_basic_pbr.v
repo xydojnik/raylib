@@ -26,7 +26,16 @@ import json
 
 const max_lights = 5           // Max dynamic lights supported by shader
 
-const asset_path = @VMODROOT+'/thirdparty/raylib/examples/shaders/resources/'
+const asset_path = [
+    @VMODROOT+'/thirdparty/raylib/examples/shaders/resources/',
+    'resources/'
+]!
+
+enum EAssetPath {
+    raylib= 0
+    local
+}
+
 
 //----------------------------------------------------------------------------------
 // Types and Structures Definition
@@ -137,14 +146,12 @@ fn (texture Texture) unload() {
 }
 
 
-@[inline]
 fn (mut tarr []Texture) load(file_path string) rl.Texture {
     texture := Texture.load(file_path)
     tarr << texture
     return texture.texture
 }
 
-@[inline]
 fn (mut tarr []Texture) foreach(fe fn(Texture)) {
     for texture in tarr { fe(texture) }
 }
@@ -240,7 +247,7 @@ const mat_map_ids = {
     'specular':   rl.material_map_specular
 }
 
-fn (mut tex_arr []Texture) load_json_model(json_path string, shader rl.Shader) !rl.Model {
+fn (mut res_arr []Texture) load_json_model(json_path string, shader rl.Shader) !rl.Model {
     js_model_data := json.decode(ModelData, os.read_file(json_path)!)!
     assert js_model_data.path != ''
 
@@ -423,13 +430,9 @@ fn main() {
     }
 
     // Load PBR shader and setup all required locations
-    // mut shader := rl.load_shader(
-    //     c'resources/shaders/glsl330/pbr.vs',
-    //     c'resources/shaders/glsl330/pbr.fs'
-    // )
     mut shader := rl.Shader.load(
-        (asset_path+'shaders/glsl330/pbr.vs').str,
-        (asset_path+'shaders/glsl330/pbr.fs').str
+        (asset_path[int(EAssetPath.local)]+'shaders/glsl330/pbr.vs').str,
+        (asset_path[int(EAssetPath.local)]+'shaders/glsl330/pbr.fs').str
     )!
     
     shader.set_loc(rl.shader_loc_map_albedo,    'albedoMap')
@@ -467,13 +470,13 @@ fn main() {
     emissive_color_loc     := shader.get_loc('emissiveColor')
     texture_tiling_loc     := shader.get_loc('tiling')
 
-    mut tex_arr := []Texture{ cap: 30 }
+    mut res_arr := []Texture{ cap: 30 }
     // Load old car model using PBR maps and shader
     // WARNING: We know this model consists of a single model.meshes[0] and
     // that model.materials[0] is by default assigned to that mesh
     // There could be more complex models consisting of multiple meshes and
     // multiple materials defined for those meshes... but always 1 mesh = 1 material
-    mut car := tex_arr.load_json_model('resources/models/old_car.json', shader)!
+    car := res_arr.load_json_model(asset_path[int(EAssetPath.local)]+'models/old_car.json', shader)!
 
     // Load floor model mesh and assign material parameters
     // NOTE: A basic plane shape can be generated instead of being loaded from a model file
@@ -483,7 +486,7 @@ fn main() {
     // floor := rl.load_model_from_mesh(floor_mesh)
 
     // Assign material shader for our floor model, same PBR shader 
-    floor := tex_arr.load_json_model('resources/models/floor.json', shader)!
+    floor := res_arr.load_json_model(asset_path[int(EAssetPath.local)]+'models/floor.json', shader)!
     
     // Models texture tiling parameter can be stored in the Material struct if required (CURRENTLY NOT USED)
     // NOTE: Material.params[4] are available for generic parameters storage (f32)
@@ -539,7 +542,7 @@ fn main() {
     ]
     mut camera_mode := camera_modes[0]
 
-    // t := tex_arr[0]
+    // t := res_arr[0]
     // img := rl.Image.load_from_texture(t.texture)
     // img := rl.Texture.to_image(t.texture)
     // img.export('Image.png')
@@ -549,8 +552,6 @@ fn main() {
         // Update
         //----------------------------------------------------------------------------------
         time := f32(rl.get_time())
-
-        // car.transform = rl.Matrix.multiply(car.transform, rl.Matrix.rotate_y(dt*0.5))
 
         if camera_modes[camera_mode] == rl.camera_orbital ||
            camera_modes[camera_mode] == rl.camera_third_person
@@ -688,19 +689,21 @@ fn main() {
     // Unbind (disconnect) shader from car.material[0] 
     // to avoid rl.unload_material() trying to unload it automatically
     unsafe {
-        car.materials[0].shader   = rl.Shader {}
-        rl.unload_material(car.materials[0])
-        car.materials[0].maps     = nil
+        car.materials[0].shader = rl.Shader {}
+        // rl.unload_material(car.materials[0])
+        car.materials[0].unload()
+        car.materials[0].maps   = nil
 
         floor.materials[0].shader = rl.Shader{}
-        rl.unload_material(floor.materials[0])
+        // rl.unload_material(floor.materials[0])
+        floor.materials[0].unload()
         floor.materials[0].maps   = nil
     }
-    rl.unload_model(floor)
-    rl.unload_model(car)
-    rl.unload_shader(shader)       // Unload rl.Shader
 
-    tex_arr.unload()
+    floor.unload()
+    car.unload()
+    shader.unload()                // Unload rl.Shader
+    res_arr.unload()
     
     rl.close_window()              // Close window and OpenGL context
 }

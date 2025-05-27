@@ -17,7 +17,7 @@
 *   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
 *   BSD-like license that allows static linking with closed source software
 *
-*   Copyright           (c) 2013-2023 Ramon Santamaria  (@raysan5)
+*   Copyright           (c) 2013-2023 Ramon Santamaria (@raysan5)
 *   Translated&Modified (c) 2024      Fedorov Alexandr (@xydojnik)
 *
 ********************************************************************************************/
@@ -36,7 +36,7 @@ fn main() {
     screen_width  := 800
     screen_height := 450
 
-    rl.init_window(screen_width, screen_height, "raylib [core] example - basic window")
+    rl.init_window(screen_width, screen_height, 'raylib [core] example - basic window')
     // De-Initialization
     //--------------------------------------------------------------------------------------
     defer { rl.close_window() }        // Close window and OpenGL context
@@ -58,9 +58,8 @@ fn main() {
 
             rl.clear_background(rl.raywhite)
 
-            rl.draw_text("Congrats! You created your first window!", 190, 200, 20, rl.black)
+            rl.draw_text('Congrats! You created your first window!', 190, 200, 20, rl.black)
 
         rl.end_drawing()
-        //----------------------------------------------------------------------------------
     }
 }

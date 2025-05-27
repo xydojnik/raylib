@@ -48,6 +48,47 @@ pub mut:
 pub type Material = C.Material
 
 
+fn C.LoadMaterials(file_name &char, material_count &int) &Material
+@[inline]
+pub fn load_materials(file_name string, material_count &int) &Material {
+	return C.LoadMaterials(file_name.str, material_count)
+}
+
+fn C.LoadMaterialDefault() Material
+@[inline]
+pub fn load_material_default() Material {
+	return C.LoadMaterialDefault()
+}
+
+fn C.UnloadMaterial(material Material)
+@[inline]
+pub fn unload_material(material Material) {
+	C.UnloadMaterial(material)
+}
+
+fn C.SetMaterialTexture(material &Material, map_type int, texture Texture)
+@[inline]
+pub fn set_material_texture(material &Material, map_type int, texture Texture) {
+	C.SetMaterialTexture(material, map_type, texture)
+}
+
+fn C.SetModelMeshMaterial(model &Model, mesh_id int, materialId int)
+@[inline]
+pub fn set_model_mesh_material(model &Model, mesh_id int, materialId int) {
+	C.SetModelMeshMaterial(model, mesh_id, materialId)
+}
+
+// Methods.
+pub fn Material.load(file_name string) []Material {
+    mut material_count := int(0)
+	cmats := C.LoadMaterials(file_name.str, material_count)
+    return ptr_arr_to_varr[Material](cmats, material_count)
+}
+
+pub fn (mats []Material) unload()  {
+    for mat in mats { mat.unload() }
+}
+
 @[inline]
 pub fn (mut mat Material) set_shader(shader Shader) {
     mat.shader = shader
@@ -61,4 +102,9 @@ pub fn (mut mat Material) set_texture(map_ind int, texture Texture) {
 @[inline]
 pub fn Material.get_default() Material {
     return load_material_default()
+}
+
+@[inline]
+pub fn (material Material) unload() {
+	C.UnloadMaterial(material)
 }
