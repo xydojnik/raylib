@@ -2,4 +2,4 @@ module gui
 
 #flag -DRAYGUI_IMPLEMENTATION
 
-#include "@VMODROOT/raygui.h"
+#include "@VMODROOT/../thirdparty/raylib/examples/shapes/raygui.h"

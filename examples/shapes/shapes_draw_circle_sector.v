@@ -18,8 +18,7 @@ module main
 
 
 import raylib as rl
-import raylib.gui as _
-// import raylib.raymath
+import raylib.gui
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -65,11 +64,11 @@ fn main() {
 
             // Draw GUI controls
             //------------------------------------------------------------------------------
-            C.GuiSliderBar(rl.Rectangle { 600,  40, 120, 20 }, 'StartAngle'.str, voidptr(0), &start_angle,  0, 720)
-            C.GuiSliderBar(rl.Rectangle { 600,  70, 120, 20 }, 'EndAngle'.str,   voidptr(0), &end_angle,    0, 70)
+            gui.slider_bar(rl.Rectangle { 600,  40, 120, 20 }, 'StartAngle'.str, voidptr(0), &start_angle,  0, 720)
+            gui.slider_bar(rl.Rectangle { 600,  70, 120, 20 }, 'EndAngle'.str,   voidptr(0), &end_angle,    0, 70)
 
-            C.GuiSliderBar(rl.Rectangle { 600, 140, 120, 20 }, 'Radius'.str,     voidptr(0), &outer_radius, 0, 200)
-            C.GuiSliderBar(rl.Rectangle { 600, 170, 120, 20 }, 'Segments'.str,   voidptr(0), &segments,     0, 100)
+            gui.slider_bar(rl.Rectangle { 600, 140, 120, 20 }, 'Radius'.str,     voidptr(0), &outer_radius, 0, 200)
+            gui.slider_bar(rl.Rectangle { 600, 170, 120, 20 }, 'Segments'.str,   voidptr(0), &segments,     0, 100)
             //------------------------------------------------------------------------------
 
             // min_segments = C.truncf(rl.ceilf((end_angle - start_angle) / 90))

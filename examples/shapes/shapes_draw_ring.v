@@ -9,8 +9,8 @@
 *   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
 *   BSD-like license that allows static linking with closed source software
 *
-*   Copyright           (c) 2018-2023 Vlad Adrian       (@demizdor) and Ramon Santamaria (@raysan5)
-*   Translated&Modified (c) 2024      Fedorov Alexandr (@xydojnik)
+*   Copyright           (c) 2018-2023 Vlad Adrian      (@demizdor) and Ramon Santamaria (@raysan5)
+*   Translated&Modified (c) 2025      Fedorov Alexandr (@xydojnik)
 *
 ********************************************************************************************/
 
@@ -18,14 +18,7 @@ module main
 
 
 import raylib as rl
-
-
-#flag -DRAYGUI_IMPLEMENTATION
-#include "@VMODROOT/examples/shapes/raygui.h"
-
-
-fn C.GuiCheckBox(bounds rl.Rectangle, text &char, checked &bool) int 
-fn C.GuiSliderBar(bounds rl.Rectangle, text_left &char, text_right &char, value &f32, min_value f32, max_value f32) int 
+import raylib.gui
 
 
 //------------------------------------------------------------------------------------
@@ -84,16 +77,16 @@ fn main() {
 
             // Draw GUI controls
             //------------------------------------------------------------------------------
-            C.GuiSliderBar(rl.Rectangle { 600, 40, 120, 20 }, "StartAngle".str, "[ ${start_angle} ] deg.".str, &start_angle, -450, 450)
-            C.GuiSliderBar(rl.Rectangle { 600, 70, 120, 20 }, "EndAngle".str,   "[ ${end_angle} ] deg.".str,   &end_angle,   -450, 450)
+            gui.slider_bar(rl.Rectangle { 600, 40, 120, 20 }, "StartAngle".str, "[ ${start_angle} ] deg.".str, &start_angle, -450, 450)
+            gui.slider_bar(rl.Rectangle { 600, 70, 120, 20 }, "EndAngle".str,   "[ ${end_angle} ] deg.".str,   &end_angle,   -450, 450)
 
-            C.GuiSliderBar(rl.Rectangle { 600, 140, 120, 20 }, "InnerRadius".str, "[ ${int(inner_radius)} ]".str, &inner_radius, 0, 100)
-            C.GuiSliderBar(rl.Rectangle { 600, 170, 120, 20 }, "OuterRadius".str, "[ ${int(outer_radius)} ]".str, &outer_radius, 0, 200)
-            C.GuiSliderBar(rl.Rectangle { 600, 240, 120, 20 }, "Segments".str, voidptr(0), &segments, 0, 100)
+            gui.slider_bar(rl.Rectangle { 600, 140, 120, 20 }, "InnerRadius".str, "[ ${int(inner_radius)} ]".str, &inner_radius, 0, 100)
+            gui.slider_bar(rl.Rectangle { 600, 170, 120, 20 }, "OuterRadius".str, "[ ${int(outer_radius)} ]".str, &outer_radius, 0, 200)
+            gui.slider_bar(rl.Rectangle { 600, 240, 120, 20 }, "Segments".str, voidptr(0), &segments, 0, 100)
 
-            C.GuiCheckBox(rl.Rectangle { 600, 320, 20, 20 }, "Draw Ring".str,        &draw_ring)
-            C.GuiCheckBox(rl.Rectangle { 600, 350, 20, 20 }, "Draw RingLines".str,   &draw_ring_lines)
-            C.GuiCheckBox(rl.Rectangle { 600, 380, 20, 20 }, "Draw CircleLines".str, &draw_circle_lines)
+            gui.check_box(rl.Rectangle { 600, 320, 20, 20 }, "Draw Ring".str,        &draw_ring)
+            gui.check_box(rl.Rectangle { 600, 350, 20, 20 }, "Draw RingLines".str,   &draw_ring_lines)
+            gui.check_box(rl.Rectangle { 600, 380, 20, 20 }, "Draw CircleLines".str, &draw_circle_lines)
             //------------------------------------------------------------------------------
 
             min_segments := int(rl.ceilf((end_angle - start_angle)/90))

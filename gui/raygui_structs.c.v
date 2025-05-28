@@ -11,19 +11,27 @@ struct C.GuiStyleProp {
 pub type GuiStyleProp = C.GuiStyleProp
 
 
-/*
 // Controls text style -NOT USED-
 // NOTE: Text style is defined by control
-struct C.GuiTextStyle {
-    u32 size
-    int charSpacing
-    int lineSpacing
-    int alignmentH
-    int alignmentV
-    int padding
-}
-pub type GuiTextStyle = C.GuiTextStyle
-*/
+// struct C.GuiTextStyle {
+//     u32 size
+//     int charSpacing
+//     int lineSpacing
+//     int alignmentH
+//     int alignmentV
+//     int padding
+// }
+// pub type GuiTextStyle = C.GuiTextStyle
+
+// Gui control state
+enum GuiState as u32 {
+    state_normal   = C.STATE_NORMAL
+    state_focused  = C.STATE_FOCUSED
+    state_pressed  = C.STATE_PRESSED
+    state_disabled = C.STATE_DISABLED
+} 
+// pub type GuiState = GuiState
+
 
 
 // Gui control state
@@ -218,5 +226,3 @@ pub type GuiTextStyle = C.GuiTextStyle
 //     HUEBAR_SELECTOR_HEIGHT,     // ColorPicker right hue bar selector height
 //     HUEBAR_SELECTOR_OVERFLOW    // ColorPicker right hue bar selector overflow
 // } GuiColorPickerProperty
-
-

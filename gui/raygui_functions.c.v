@@ -1,6 +1,6 @@
 module gui
 
-import raylib_v as rl
+import raylib as rl
 
 
 // Global gui state control functions
