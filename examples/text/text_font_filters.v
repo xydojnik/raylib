@@ -12,7 +12,7 @@
 *   BSD-like license that allows static linking with closed source software
 *
 *   Copyright           (c) 2015-2023 Ramon Santamaria (@raysan5)
-*   Translated&Modified (c) 2024 Fedorov Alexandr     (@xydojnik)
+*   Translated&Modified (c) 2024      Fedorov Alexandr (@xydojnik)
 *
 ********************************************************************************************/
 
@@ -21,6 +21,8 @@ module main
 
 import raylib as rl
 
+
+const asset_path = @VMODROOT+'/thirdparty/raylib/examples/text/resources/'
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -31,14 +33,14 @@ fn main() {
     screen_width  := 800
     screen_height := 450
 
-    rl.init_window(screen_width, screen_height, "raylib [text] example - font filters")
+    rl.init_window(screen_width, screen_height, 'raylib [text] example - font filters')
     defer { rl.close_window() }             // Close window and OpenGL context
 
-    msg := "Loaded Font"
+    msg := 'Loaded Font'
     // NOTE: Textures/Fonts MUST be loaded after Window initialization (OpenGL context is required)
 
     // TTF Font loading with custom generation parameters
-    mut font := rl.load_font_ex("resources/KAISG.ttf", 96, voidptr(0), 0)
+    mut font := rl.load_font_ex(asset_path+'KAISG.ttf', 96, voidptr(0), 0)
     defer { rl.unload_font(font) }         // Font unloading
 
     // Generate mipmap levels to use trilinear filtering
@@ -89,7 +91,7 @@ fn main() {
 
             dropped_file := unsafe { dropped_files.paths[0].vstring() }
             // NOTE: We only support first ttf file dropped
-            if rl.is_file_extension(dropped_file, ".ttf") {
+            if rl.is_file_extension(dropped_file, '.ttf') {
                 rl.unload_font(font)
                 font = rl.load_font_ex(dropped_file, int(font_size), voidptr(0), 0)
             }
@@ -104,10 +106,10 @@ fn main() {
 
             rl.clear_background(rl.raywhite)
 
-            rl.draw_text("Use mouse wheel to change font size", 20, 20, 10, rl.gray)
-            rl.draw_text("Use KEY_RIGHT and KEY_LEFT to move text", 20, 40, 10, rl.gray)
-            rl.draw_text("Use 1, 2, 3 to change texture filter", 20, 60, 10, rl.gray)
-            rl.draw_text("Drop a new TTF font for dynamic loading", 20, 80, 10, rl.darkgray)
+            rl.draw_text('Use mouse wheel to change font size', 20, 20, 10, rl.gray)
+            rl.draw_text('Use KEY_RIGHT and KEY_LEFT to move text', 20, 40, 10, rl.gray)
+            rl.draw_text('Use 1, 2, 3 to change texture filter', 20, 60, 10, rl.gray)
+            rl.draw_text('Drop a new TTF font for dynamic loading', 20, 80, 10, rl.darkgray)
 
             rl.draw_text_ex(font, msg, font_position, font_size, 0, rl.black)
 
@@ -115,16 +117,16 @@ fn main() {
             //DrawRectangleLines(font_position.x, font_position.y, text_size.x, text_size.y, RED)
 
             rl.draw_rectangle(0, screen_height - 80, screen_width, 80, rl.lightgray)
-            rl.draw_text("Font size: ${font_size}", 20, screen_height - 50, 10, rl.darkgray)
-            rl.draw_text("Text size: [${text_size.x}, ${text_size.y}]", 20, screen_height - 30, 10, rl.darkgray)
-            rl.draw_text("CURRENT TEXTURE FILTER:", 250, 400, 20, rl.gray)
+            rl.draw_text('Font size: ${font_size}', 20, screen_height - 50, 10, rl.darkgray)
+            rl.draw_text('Text size: [${text_size.x}, ${text_size.y}]', 20, screen_height - 30, 10, rl.darkgray)
+            rl.draw_text('CURRENT TEXTURE FILTER:', 250, 400, 20, rl.gray)
 
             if current_font_filter == 0 {
-                rl.draw_text("POINT", 570, 400, 20, rl.black)
+                rl.draw_text('POINT', 570, 400, 20, rl.black)
             } else if current_font_filter == 1 {
-                rl.draw_text("BILINEAR", 570, 400, 20, rl.black)
+                rl.draw_text('BILINEAR', 570, 400, 20, rl.black)
             } else if current_font_filter == 2 {
-                rl.draw_text("TRILINEAR", 570, 400, 20, rl.black)
+                rl.draw_text('TRILINEAR', 570, 400, 20, rl.black)
             }
 
         rl.end_drawing()

@@ -22,8 +22,8 @@
 *   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
 *   BSD-like license that allows static linking with closed source software
 *
-*   Copyright           (c) 2021-2023 Vlad Adrian  (@demizdor)
-*   Translated&Modified (c) 2024 Fedorov Alexandr (@xydojnik)
+*   Copyright           (c) 2021-2023 Vlad Adrian      (@demizdor)
+*   Translated&Modified (c) 2024      Fedorov Alexandr (@xydojnik)
 *
 ********************************************************************************************/
 
@@ -32,9 +32,10 @@ module main
 
 import raylib as rl
 
-                        
+const asset_path = @VMODROOT+'/thirdparty/raylib/examples/text/resources/'
+
 // It does not work liky it should. I will fix it... some day.
-                        
+
 //--------------------------------------------------------------------------------------
 // Globals
 //--------------------------------------------------------------------------------------
@@ -70,7 +71,7 @@ fn main() {
     screen_height := 450
 
     rl.set_config_flags(rl.flag_msaa_4x_hint | rl.flag_vsync_hint)
-    rl.init_window(screen_width, screen_height, "raylib [txt] example - draw 2D txt in 3D")
+    rl.init_window(screen_width, screen_height, 'raylib [txt] example - draw 2D txt in 3D')
     defer { rl.close_window() }       // Close window and OpenGL context
 
     mut spin       := true  // Spin the camera?
@@ -100,7 +101,7 @@ fn main() {
 
     // Set the txt (using markdown!)
     mut txt := []u8{len: 64, init: 0}
-    mut t   := "Hello ~~World~~ in 3D!"
+    mut t   := 'Hello ~~World~~ in 3D!'
     unsafe { vmemcpy(txt.data, t.str, t.len) }
 
     mut tbox           := rl.Vector3 {}
@@ -121,7 +122,7 @@ fn main() {
     mut dark  := rl.red
 
     // Load the alpha discard shader
-    alpha_discard := rl.load_shader(voidptr(0), "resources/shaders/glsl330/alpha_discard.fs".str)
+    alpha_discard := rl.Shader.load(voidptr(0), (asset_path+'shaders/glsl330/alpha_discard.fs').str)!
 
     // Array filled with multiple random colors (when multicolor mode is set)
     mut multi := []rl.Color{len: text_max_layers }
@@ -144,10 +145,10 @@ fn main() {
             // NOTE: We only support first ttf file dropped
             drop_file_name := unsafe { dropped_files.paths[0].vstring() }
 
-            if rl.is_file_extension(drop_file_name, ".ttf") {
+            if rl.is_file_extension(drop_file_name, '.ttf') {
                 rl.unload_font(font)
                 font = rl.load_font_ex(drop_file_name, int(font_size), voidptr(0), 0)
-            } else if rl.is_file_extension(drop_file_name, ".fnt") {
+            } else if rl.is_file_extension(drop_file_name, '.fnt') {
                 rl.unload_font(font)
                 font      = rl.load_font(drop_file_name)
                 font_size = f32(font.baseSize)
@@ -310,44 +311,44 @@ fn main() {
                     default_font := rl.get_font_default()
                     rl.rl_push_matrix()
                         rl.rl_rotatef(180.0, 0.0, 1.0, 0.0)
-                        mut opt := "< SIZE: ${font_size} >".str           // println(unsafe { (&opt[0]).vstring() })
-                        quads += rl.text_length(opt)
+                        mut opt := '< SIZE: ${font_size} >'.str           // println(unsafe { (&opt[0]).vstring() })
+                        quads += int(rl.text_length(opt))
                         mut m   := measure_text_3d(default_font, opt, 8.0, 1.0, 0.0)
                         mut pos := rl.Vector3 { -m.x/2.0, 0.01, 2.0}
                         draw_text_3d(default_font, opt, pos, 8.0, 1.0, 0.0, false, rl.blue)
                         pos.z += 0.5 + m.z
 
-                        opt = "< SPACING: ${font_spacing} >".str
-                        quads += rl.text_length(opt)
+                        opt = '< SPACING: ${font_spacing} >'.str
+                        quads += int(rl.text_length(opt))
                         m = measure_text_3d(default_font, opt, 8.0, 1.0, 0.0)
                         pos.x = -m.x/2.0
                         draw_text_3d(default_font, opt, pos, 8.0, 1.0, 0.0, false, rl.blue)
                         pos.z += 0.5 + m.z
 
-                        opt = "< LINE: ${line_spacing} >".str             // println(unsafe { (&opt[0]).vstring() })
-                        quads += rl.text_length(opt)
+                        opt = '< LINE: ${line_spacing} >'.str             // println(unsafe { (&opt[0]).vstring() })
+                        quads += int(rl.text_length(opt))
                         m = measure_text_3d(default_font, opt, 8.0, 1.0, 0.0)
                         pos.x = -m.x/2.0
                         draw_text_3d(default_font, opt, pos, 8.0, 1.0, 0.0, false, rl.blue)
                         pos.z += 1.0 + m.z
 
-                        opt = "< LBOX: ${if slb {'ON'}else{'OFF'}} >".str // println(unsafe { (&opt[0]).vstring() })
-                        quads += rl.text_length(opt)
+                        opt = '< LBOX: ${if slb {'ON'}else{'OFF'}} >'.str // println(unsafe { (&opt[0]).vstring() })
+                        quads += int(rl.text_length(opt))
                         m = measure_text_3d(default_font, opt, 8.0, 1.0, 0.0)
                         pos.x = -m.x/2.0
                         draw_text_3d(default_font, opt, pos, 8.0, 1.0, 0.0, false, rl.red)
                         pos.z += 0.5 + m.z
 
                         is_show_txt_boundry := if show_text_boundry { 'ON' } else { 'OFF'}
-                        opt = "< TBOX: ${is_show_txt_boundry} >".str      // println(unsafe { (&opt[0]).vstring() })
-                        quads += rl.text_length(opt)
+                        opt = '< TBOX: ${is_show_txt_boundry} >'.str      // println(unsafe { (&opt[0]).vstring() })
+                        quads += int(rl.text_length(opt))
                         m = measure_text_3d(default_font, opt, 8.0, 1.0, 0.0)
                         pos.x = -m.x/2.0
                         draw_text_3d(default_font, opt, pos, 8.0, 1.0, 0.0, false, rl.red)
                         pos.z += 0.5 + m.z
 
-                        opt = "< LAYER DISTANCE: ${layer_distance} >".str // println(unsafe { (&opt[0]).vstring() })
-                        quads += rl.text_length(opt)
+                        opt = '< LAYER DISTANCE: ${layer_distance} >'.str // println(unsafe { (&opt[0]).vstring() })
+                        quads += int(rl.text_length(opt))
                         m = measure_text_3d(default_font, opt, 8.0, 1.0, 0.0)
                         pos.x = -m.x/2.0
                         draw_text_3d(default_font, opt, pos, 8.0, 1.0, 0.0, false, rl.darkpurple)
@@ -356,42 +357,42 @@ fn main() {
 
                     // Draw 3D info txt (use default font)
                     //-------------------------------------------------------------------------
-                    opt = "All the txt displayed here is in 3D".str
+                    opt = 'All the txt displayed here is in 3D'.str
                     quads += 36
                     m = measure_text_3d(default_font, opt, 10.0, 0.5, 0.0)
                     pos = rl.Vector3 {-m.x/2.0, 0.01, 2.0}
                     draw_text_3d(default_font, opt, pos, 10.0, 0.5, 0.0, false, rl.darkblue)
                     pos.z += 1.5 + m.z
 
-                    opt = "Press [Left]/[Right] to change the font size".str
+                    opt = 'Press [Left]/[Right] to change the font size'.str
                     quads += 44
                     m = measure_text_3d(default_font, opt, 6.0, 0.5, 0.0)
                     pos.x = -m.x/2.0
                     draw_text_3d(default_font, opt, pos, 6.0, 0.5, 0.0, false, rl.darkblue)
                     pos.z += 0.5 + m.z
 
-                    opt = "Press [Up]/[Down] to change the font spacing".str
+                    opt = 'Press [Up]/[Down] to change the font spacing'.str
                     quads += 44
                     m = measure_text_3d(default_font, opt, 6.0, 0.5, 0.0)
                     pos.x = -m.x/2.0
                     draw_text_3d(default_font, opt, pos, 6.0, 0.5, 0.0, false, rl.darkblue)
                     pos.z += 0.5 + m.z
 
-                    opt = "Press [PgUp]/[PgDown] to change the line spacing".str
+                    opt = 'Press [PgUp]/[PgDown] to change the line spacing'.str
                     quads += 48
                     m = measure_text_3d(default_font, opt, 6.0, 0.5, 0.0)
                     pos.x = -m.x/2.0
                     draw_text_3d(default_font, opt, pos, 6.0, 0.5, 0.0, false, rl.darkblue)
                     pos.z += 0.5 + m.z
 
-                    opt = "Press [F1] to toggle the letter boundry".str
+                    opt = 'Press [F1] to toggle the letter boundry'.str
                     quads += 39
                     m = measure_text_3d(default_font, opt, 6.0, 0.5, 0.0)
                     pos.x = -m.x/2.0
                     draw_text_3d(default_font, opt, pos, 6.0, 0.5, 0.0, false, rl.darkblue)
                     pos.z += 0.5 + m.z
 
-                    opt = "Press [F2] to toggle the txt boundry".str
+                    opt = 'Press [F2] to toggle the txt boundry'.str
                     quads += 37
                     m = measure_text_3d(default_font, opt, 6.0, 0.5, 0.0)
                     pos.x = -m.x/2.0
@@ -405,35 +406,33 @@ fn main() {
 
             // Draw 2D info txt & stats
             //-------------------------------------------------------------------------
-            rl.draw_text("Drag & drop a font file to change the font!\nType something, see what happens!\n\nPress [F3] to toggle the camera", 10, 35, 10, rl.black)
+            rl.draw_text('Drag & drop a font file to change the font!\nType something, see what happens!\n\nPress [F3] to toggle the camera', 10, 35, 10, rl.black)
 
-            quads += rl.text_length(txt.data)*2*layers
-            mut tmp := "${layers} layer(s) | ${if spin {'ORBITAL'}else{'FREE'}} camera | ${quads} quads (${quads*4} verts)".str
+            quads += int(rl.text_length(txt.data)*2*u32(layers))
+            mut tmp := '${layers} layer(s) | ${if spin {'ORBITAL'}else{'FREE'}} camera | ${quads} quads (${quads*4} verts)'.str
 
             mut width := rl.measure_text(tmp, 10)
             rl.draw_text( unsafe { tmp.vstring() }, screen_width - 20 - width, 10, 10, rl.darkgreen)
 
-            tmp = "[Home]/[End] to add/remove 3D txt layers".str
+            tmp = '[Home]/[End] to add/remove 3D txt layers'.str
             width = rl.measure_text(tmp, 10)
             rl.draw_text(unsafe { tmp.vstring() }, screen_width - 20 - width, 25, 10, rl.darkgray)
 
-            tmp = "[Insert]/[Delete] to increase/decrease distance between layers".str
+            tmp = '[Insert]/[Delete] to increase/decrease distance between layers'.str
             width = rl.measure_text(tmp, 10)
             rl.draw_text(unsafe { tmp.vstring() }, screen_width - 20 - width, 40, 10, rl.darkgray)
 
-            tmp = "click the [CUBE] for a random color".str
+            tmp = 'click the [CUBE] for a random color'.str
             width = rl.measure_text(tmp, 10)
             rl.draw_text(unsafe { tmp.vstring() }, screen_width - 20 - width, 55, 10, rl.darkgray)
 
-            tmp = "[Tab] to toggle multicolor mode".str
+            tmp = '[Tab] to toggle multicolor mode'.str
             width = rl.measure_text(tmp, 10)
             rl.draw_text(unsafe { tmp.vstring() }, screen_width - 20 - width, 70, 10, rl.darkgray)
-            //-------------------------------------------------------------------------
 
             rl.draw_fps(10, 10)
 
         rl.end_drawing()
-        //----------------------------------------------------------------------------------
     }
 }
 
@@ -782,5 +781,5 @@ fn generate_random_color(s f32, v f32) rl.Color {
     
     h = rl.fmodf(h + h*phi, 360.0)
     
-    return rl.color_from_hsv(h, s, v)
+    return rl.Color.from_hsv(h, s, v)
 }

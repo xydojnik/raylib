@@ -9,7 +9,7 @@
 *   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
 *   BSD-like license that allows static linking with closed source software
 *
-*   Copyright           (c) 2019-2023 Vlad Adrian       (@demizdor) and Ramon Santamaria (@raysan5)
+*   Copyright           (c) 2019-2023 Vlad Adrian      (@demizdor) and Ramon Santamaria (@raysan5)
 *   Translated&Modified (c) 2024      Fedorov Alexandr (@xydojnik)
 *
 ********************************************************************************************/
@@ -18,6 +18,9 @@ module main
 
 
 import raylib as rl
+
+
+const asset_path = @VMODROOT+'/thirdparty/raylib/examples/text/resources/'
 
 
 // Not fully translated-adapted to v.
@@ -145,14 +148,14 @@ fn main() {
     screen_height := 450
 
     rl.set_config_flags(rl.flag_msaa_4x_hint | rl.flag_vsync_hint)
-    rl.init_window(screen_width, screen_height, "raylib [text] example - unicode")
+    rl.init_window(screen_width, screen_height, 'raylib [text] example - unicode')
 
     // Load the font resources
     // NOTE: font_asian is for asian languages,
     // font_emoji is the emojis and font_default is used for everything else
-    font_default := rl.load_font("resources/dejavu.fnt")
-    font_asian   := rl.load_font("resources/noto_cjk.fnt")
-    font_emoji   := rl.load_font("resources/symbola.fnt")
+    font_default := rl.load_font(asset_path+'dejavu.fnt')
+    font_asian   := rl.load_font(asset_path+'noto_cjk.fnt')
+    font_emoji   := rl.load_font(asset_path+'symbola.fnt')
 
     mut hovered_pos  := rl.Vector2 {}
     mut selected_pos := rl.Vector2 {}
@@ -197,9 +200,9 @@ fn main() {
                 emoji_rect := rl.Rectangle { position.x, position.y, f32(font_emoji.baseSize), f32(font_emoji.baseSize) }
 
                 if !rl.check_collision_point_rec(mouse, emoji_rect) {
-                    rl.draw_text_ex(font_emoji, txt.vstring(), position, f32(font_emoji.baseSize), 1.0, if selected == i { emoji[i].color} else { rl.Color.fade(rl.lightgray, 0.4) })
+                    rl.draw_text_ex(font_emoji, unsafe { txt.vstring() }, position, f32(font_emoji.baseSize), 1.0, if selected == i { emoji[i].color} else { rl.Color.fade(rl.lightgray, 0.4) })
                 } else {
-                    rl.draw_text_ex(font_emoji, txt.vstring(), position, f32(font_emoji.baseSize), 1.0, emoji[i].color )
+                    rl.draw_text_ex(font_emoji, unsafe { txt.vstring() }, position, f32(font_emoji.baseSize), 1.0, emoji[i].color )
                     hovered     = i
                     hovered_pos = position
                 }
@@ -230,7 +233,7 @@ fn main() {
                 }
 
                 // Calculate size for the message box (approximate the height and width)
-                mut sz := rl.measure_text_ex(font, messages[message].text.vstring(), f32(font.baseSize), 1.0)
+                mut sz := rl.measure_text_ex(font, unsafe { messages[message].text.vstring() }, f32(font.baseSize), 1.0)
                 if sz.x > 300 {
                     sz.y *= sz.x/300 sz.x = 300
                 } else if sz.x < 160 {
@@ -272,7 +275,7 @@ fn main() {
                 // Draw the info text below the main message
                 size   := rl.measure_text(messages[message].text, 10)
                 length := rl.get_codepoint_count(messages[message].text)
-                info   := "${messages[message].language} ${length} characters ${size} bytes"
+                info   := '${messages[message].language} ${length} characters ${size} bytes'
                 sz = rl.measure_text_ex(rl.get_font_default(), info, 10, 1.0)
                 
                 rl.draw_text(info, int(text_rect.x + text_rect.width - sz.x), int(msg_rect.y + msg_rect.height - sz.y - 2), 10, rl.raywhite)
@@ -280,8 +283,8 @@ fn main() {
             //------------------------------------------------------------------------------
 
             // Draw the info text
-            rl.draw_text("These emojis have something to tell you, click each to find out!", (screen_width - 650)/2, screen_height - 40, 20, rl.gray)
-            rl.draw_text("Each emoji is a unicode character from a font, not a texture... Press [SPACEBAR] to refresh", (screen_width - 484)/2, screen_height - 16, 10, rl.gray)
+            rl.draw_text('These emojis have something to tell you, click each to find out!', (screen_width - 650)/2, screen_height - 40, 20, rl.gray)
+            rl.draw_text('Each emoji is a unicode character from a font, not a texture... Press [SPACEBAR] to refresh', (screen_width - 484)/2, screen_height - 16, 10, rl.gray)
 
         rl.end_drawing()
         //----------------------------------------------------------------------------------
@@ -308,7 +311,7 @@ fn randomize_emoji() {
         emoj.index = rl.get_random_value(0, 179)*5
 
         // Generate a random color for this emoji
-        emoj.color = rl.Color.fade(rl.color_from_hsv(f32((start*(i + 1))%360), 0.6, 0.85), 0.8)
+        emoj.color = rl.Color.fade(rl.Color.from_hsv(f32((start*(i + 1))%360), 0.6, 0.85), 0.8)
 
         // Set a random message for this emoji
         emoj.message = rl.get_random_value(0, emoji.len-1)

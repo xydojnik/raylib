@@ -20,7 +20,9 @@ module main
 
 import raylib as rl
 
-const max_fonts = 8
+
+const asset_path = @VMODROOT+'/thirdparty/raylib/examples/text/resources/'
+const max_fonts  = 8
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -31,35 +33,34 @@ fn main() {
     screen_width  := 800
     screen_height := 450
 
-    rl.init_window(screen_width, screen_height, "raylib [text] example - raylib fonts")
+    rl.init_window(screen_width, screen_height, 'raylib [text] example - raylib fonts')
     defer { rl.close_window() }               // Close window and OpenGL context
 
     // NOTE: Textures MUST be loaded after Window initialization (OpenGL context is required)
     fonts := [
-        rl.load_font("resources/fonts/alagard.png"),
-        rl.load_font("resources/fonts/pixelplay.png"),
-        rl.load_font("resources/fonts/mecha.png"),
-        rl.load_font("resources/fonts/setback.png"),
-        rl.load_font("resources/fonts/romulus.png"),
-        rl.load_font("resources/fonts/pixantiqua.png"),
-        rl.load_font("resources/fonts/alpha_beta.png"),
-        rl.load_font("resources/fonts/jupiter_crash.png")
+        rl.load_font(asset_path+'fonts/alagard.png'),
+        rl.load_font(asset_path+'fonts/pixelplay.png'),
+        rl.load_font(asset_path+'fonts/mecha.png'),
+        rl.load_font(asset_path+'fonts/setback.png'),
+        rl.load_font(asset_path+'fonts/romulus.png'),
+        rl.load_font(asset_path+'fonts/pixantiqua.png'),
+        rl.load_font(asset_path+'fonts/alpha_beta.png'),
+        rl.load_font(asset_path+'fonts/jupiter_crash.png')
     ]
     defer { for font in fonts { rl.unload_font(font) } }     // Fonts unloading
     
     messages := [
-        "ALAGARD FONT designed by Hewett Tsoi",
-        "PIXELPLAY FONT designed by Aleksander Shevchuk",
-        "MECHA FONT designed by Captain Falcon",
-        "SETBACK FONT designed by Brian Kent (AEnigma)",
-        "ROMULUS FONT designed by Hewett Tsoi",
-        "PIXANTIQUA FONT designed by Gerhard Grossmann",
-        "ALPHA_BETA FONT designed by Brian Kent (AEnigma)",
-        "JUPITER_CRASH FONT designed by Brian Kent (AEnigma)"
+        'ALAGARD FONT designed by Hewett Tsoi',
+        'PIXELPLAY FONT designed by Aleksander Shevchuk',
+        'MECHA FONT designed by Captain Falcon',
+        'SETBACK FONT designed by Brian Kent (AEnigma)',
+        'ROMULUS FONT designed by Hewett Tsoi',
+        'PIXANTIQUA FONT designed by Gerhard Grossmann',
+        'ALPHA_BETA FONT designed by Brian Kent (AEnigma)',
+        'JUPITER_CRASH FONT designed by Brian Kent (AEnigma)'
     ]
     spacings := [ int(2), 4, 8, 4, 3, 4, 4, 1 ]
 
-    
     mut positions:= []rl.Vector2 { len: max_fonts }
     for i, mut position in positions {
         position.x = f32(screen_width)/2.0 - rl.measure_text_ex(
@@ -92,7 +93,7 @@ fn main() {
 
         rl.clear_background(rl.raywhite)
 
-            rl.draw_text("free fonts included with raylib", 250, 20, 20, rl.darkgray)
+            rl.draw_text('free fonts included with raylib', 250, 20, 20, rl.darkgray)
             rl.draw_line(220, 50, 590, 50, rl.darkgray)
 
             for i in 0..fonts.len {

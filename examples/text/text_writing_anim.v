@@ -27,10 +27,10 @@ fn main() {
     screen_width  := 800
     screen_height := 450
 
-    rl.init_window(screen_width, screen_height, "raylib [text] example - text writing anim")
+    rl.init_window(screen_width, screen_height, 'raylib [text] example - text writing anim')
     defer { rl.close_window() }         // Close window and OpenGL context
 
-    message := "This sample illustrates a text writing\nanimation effect! Check it out! )"
+    message := 'This sample illustrates a text writing\nanimation effect! Check it out! )'
     
     mut frames_counter := int(0)
 
@@ -54,8 +54,8 @@ fn main() {
             rl.clear_background(rl.raywhite)
 
             rl.draw_text(message[0..(frames_counter/10)%message.len], 210, 160, 20, rl.maroon)
-            rl.draw_text("PRESS [ENTER] to RESTART!",  240, 260, 20, rl.lightgray)
-            rl.draw_text("PRESS [SPACE] to SPEED UP!", 239, 300, 20, rl.lightgray)
+            rl.draw_text('PRESS [ENTER] to RESTART!',  240, 260, 20, rl.lightgray)
+            rl.draw_text('PRESS [SPACE] to SPEED UP!', 239, 300, 20, rl.lightgray)
 
         rl.end_drawing()
     }

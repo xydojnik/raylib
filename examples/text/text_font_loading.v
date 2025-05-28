@@ -17,7 +17,7 @@
 *   BSD-like license that allows static linking with closed source software
 *
 *   Copyright           (c) 2016-2023 Ramon Santamaria (@raysan5)
-*   Translated&Modified (c) 2024 Fedorov Alexandr     (@xydojnik)
+*   Translated&Modified (c) 2024      Fedorov Alexandr (@xydojnik)
 *
 ********************************************************************************************/
 
@@ -25,6 +25,9 @@ module main
 
 
 import raylib as rl
+
+
+const asset_path = @VMODROOT+'/thirdparty/raylib/examples/text/resources/'
 
 
 //------------------------------------------------------------------------------------
@@ -36,7 +39,7 @@ fn main() {
     screen_width  := 800
     screen_height := 450
 
-    rl.init_window(screen_width, screen_height, "raylib [text] example - font loading")
+    rl.init_window(screen_width, screen_height, 'raylib [text] example - font loading')
     defer { rl.close_window() }     // Close window and OpenGL context
 
     // Define characters to draw
@@ -46,11 +49,11 @@ fn main() {
     // NOTE: Textures/Fonts MUST be loaded after Window initialization (OpenGL context is required)
 
     // BMFont (AngelCode) : Font data and image atlas have been generated using external program
-    font_bm := rl.load_font("resources/pixantiqua.fnt")
+    font_bm := rl.load_font(asset_path+'pixantiqua.fnt')
 
     // TTF font : Font data and atlas are generated directly from TTF
     // NOTE: We define a font base size of 32 pixels tall and up-to 250 characters
-    font_ttf := rl.load_font_ex("resources/pixantiqua.ttf", 32, voidptr(0), 250)
+    font_ttf := rl.load_font_ex(asset_path+'pixantiqua.ttf', 32, voidptr(0), 250)
 
     defer {
         rl.unload_font(font_bm)     // AngelCode Font unloading
@@ -77,14 +80,14 @@ fn main() {
 
             rl.clear_background(rl.raywhite)
         
-            rl.draw_text("Hold SPACE to use TTF generated font", 20, 20, 20, rl.lightgray)
+            rl.draw_text('Hold SPACE to use TTF generated font', 20, 20, 20, rl.lightgray)
 
             if use_ttf {
                 rl.draw_text_ex(font_ttf, msg, rl.Vector2 { 20.0, 100.0 }, f32(font_ttf.baseSize), 2, rl.lime)
-                rl.draw_text("Using TTF font generated", 20, rl.get_screen_height() - 30, 20, rl.gray)
+                rl.draw_text('Using TTF font generated', 20, rl.get_screen_height() - 30, 20, rl.gray)
             } else {
                 rl.draw_text_ex(font_bm, msg, rl.Vector2 { 20.0, 100.0 }, f32(font_bm.baseSize), 2, rl.maroon)
-                rl.draw_text("Using BMFont (Angelcode) imported", 20, rl.get_screen_height() - 30, 20, rl.gray)
+                rl.draw_text('Using BMFont (Angelcode) imported', 20, rl.get_screen_height() - 30, 20, rl.gray)
             }
 
         rl.end_drawing()

@@ -8,7 +8,7 @@
 *   BSD-like license that allows static linking with closed source software
 *
 *   Copyright           (c) 2015-2023 Ramon Santamaria (@raysan5)
-*   Translated&Modified (c) 2024 Fedorov Alexandr     (@xydojnik)
+*   Translated&Modified (c) 2024      Fedorov Alexandr (@xydojnik)
 *
 ********************************************************************************************/
 
@@ -16,6 +16,10 @@ module main
 
 
 import raylib as rl
+
+
+const asset_path = @VMODROOT+'/thirdparty/raylib/examples/text/resources/'
+
 
 const glsl_version = 330
 
@@ -29,16 +33,16 @@ fn main() {
     screen_width  := 800
     screen_height := 450
 
-    rl.init_window(screen_width, screen_height, "raylib [text] example - SDF fonts")
+    rl.init_window(screen_width, screen_height, 'raylib [text] example - SDF fonts')
     defer { rl.close_window() }     // Close window and OpenGL context
 
     // NOTE: Textures/Fonts MUST be loaded after Window initialization (OpenGL context is required)
 
-    msg := "Signed Distance Fields"
+    msg := 'Signed Distance Fields'
 
     // Loading file to memory
     mut file_size := int(0)
-    file_data     := rl.load_file_data("resources/anonymous_pro_bold.ttf", &file_size)
+    file_data     := rl.load_file_data(asset_path+'anonymous_pro_bold.ttf', &file_size)
 
     // Default font generation from TTF font
     mut font_default := rl.Font {}
@@ -73,8 +77,8 @@ fn main() {
 
     
     // Load SDF required shader (we use default vertex shader)
-    shader := rl.load_shader(voidptr(0), "resources/shaders/glsl${glsl_version}/sdf.fs".str)
-    defer { rl.unload_shader(shader) }     // Unload SDF shader
+    shader := rl.Shader.load(voidptr(0), (asset_path+'shaders/glsl${glsl_version}/sdf.fs').str)!
+    defer { shader.unload() }           // Unload SDF shader
     rl.set_texture_filter(font_sdf.texture, rl.texture_filter_bilinear)    // Required for SDF font
 
     mut font_position := rl.Vector2 { 40, f32(screen_height)/2.0 - 50 }
@@ -124,21 +128,20 @@ fn main() {
             }
 
             if current_font == 1 {
-                rl.draw_text("SDF!", 320, 20, 80, rl.red)
+                rl.draw_text('SDF!', 320, 20, 80, rl.red)
             } else {
-                rl.draw_text("default font", 315, 40, 30, rl.gray)
+                rl.draw_text('default font', 315, 40, 30, rl.gray)
             }
 
             scr_width  := rl.get_screen_width()
             scr_height := rl.get_screen_height()
 
-            rl.draw_text("FONT SIZE: 16.0", scr_width - 240, 20, 20, rl.darkgray)
-            rl.draw_text("RENDER SIZE: ${font_size}", scr_width - 240, 50, 20, rl.darkgray)
-            rl.draw_text("Use MOUSE WHEEL to SCALE TEXT!", scr_width - 240, 90, 10, rl.darkgray)
+            rl.draw_text('FONT SIZE: 16.0', scr_width - 240, 20, 20, rl.darkgray)
+            rl.draw_text('RENDER SIZE: ${font_size}', scr_width - 240, 50, 20, rl.darkgray)
+            rl.draw_text('Use MOUSE WHEEL to SCALE TEXT!', scr_width - 240, 90, 10, rl.darkgray)
 
-            rl.draw_text("HOLD SPACE to USE SDF FONT VERSION!", 340, scr_height - 30, 20, rl.maroon)
+            rl.draw_text('HOLD SPACE to USE SDF FONT VERSION!', 340, scr_height - 30, 20, rl.maroon)
 
         rl.end_drawing()
-        //----------------------------------------------------------------------------------
     }
 }

@@ -9,7 +9,7 @@
 *   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
 *   BSD-like license that allows static linking with closed source software
 *
-*   Copyright           (c) 2018-2023 Vlad Adrian       (@demizdor) and Ramon Santamaria (@raysan5)
+*   Copyright           (c) 2018-2023 Vlad Adrian      (@demizdor) and Ramon Santamaria (@raysan5)
 *   Translated&Modified (c) 2024      Fedorov Alexandr (@xydojnik)
 *
 ********************************************************************************************/
@@ -29,7 +29,7 @@ fn main() {
     screen_width  := 800
     screen_height := 450
 
-    rl.init_window(screen_width, screen_height, "raylib [text] example - draw text inside a rectangle")
+    rl.init_window(screen_width, screen_height, 'raylib [text] example - draw text inside a rectangle')
     defer { rl.close_window() }      // Close window and OpenGL context
 
     text := "Text cannot escape\tthis container\t...word wrap also works when active so here's \
@@ -124,14 +124,14 @@ tempor incididunt ut labore et dolore magna aliqua. Nec ullamcorper sit amet ris
             rl.draw_rectangle(0, screen_height - 54, screen_width, 54, rl.gray)
             rl.draw_rectangle_rec(rl.Rectangle { 382.0, f32(screen_height) - 34.0, 12.0, 12.0 }, rl.maroon)
 
-            rl.draw_text("Word Wrap: ", 313, screen_height-115, 20, rl.black)
+            rl.draw_text('Word Wrap: ', 313, screen_height-115, 20, rl.black)
             rl.draw_text(
-                if word_wrap { "ON" } else { "OFF" }, 447,
+                if word_wrap { 'ON' } else { 'OFF' }, 447,
                 screen_height - 115, 20,
                 if word_wrap { rl.red } else { rl.black }
             )
-            rl.draw_text("Press [SPACE] to toggle word wrap", 218, screen_height - 86, 20, rl.gray)
-            rl.draw_text("Click hold & drag the    to resize the container", 155, screen_height - 38, 20, rl.raywhite)
+            rl.draw_text('Press [SPACE] to toggle word wrap', 218, screen_height - 86, 20, rl.gray)
+            rl.draw_text('Click hold & drag the    to resize the container', 155, screen_height - 38, 20, rl.raywhite)
 
         rl.end_drawing()
     }

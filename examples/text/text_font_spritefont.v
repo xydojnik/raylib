@@ -27,6 +27,7 @@ module main
 
 import raylib as rl
 
+const asset_path = @VMODROOT+'/thirdparty/raylib/examples/text/resources/'
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
@@ -36,18 +37,18 @@ fn main() {
     screen_width  := 800
     screen_height := 450
 
-    rl.init_window(screen_width, screen_height, "raylib [text] example - sprite font loading")
+    rl.init_window(screen_width, screen_height, 'raylib [text] example - sprite font loading')
     defer { rl.close_window() }        // Close window and OpenGL context
 
-    msgs := [ "THIS IS A custom SPRITE FONT...",
-             "...and this is ANOTHER CUSTOM font...",
-             "...and a THIRD one! GREAT! :D"]
+    msgs := [ 'THIS IS A custom SPRITE FONT...',
+             '...and this is ANOTHER CUSTOM font...',
+             '...and a THIRD one! GREAT! :D']
 
     // NOTE: Textures/Fonts MUST be loaded after Window initialization (OpenGL context is required)
     fonts := [
-        rl.load_font("resources/custom_mecha.png"),        // Font loading
-        rl.load_font("resources/custom_alagard.png"),      // Font loading
-        rl.load_font("resources/custom_jupiter_crash.png") // Font loading
+        rl.load_font(asset_path+'custom_mecha.png'),        // Font loading
+        rl.load_font(asset_path+'custom_alagard.png'),      // Font loading
+        rl.load_font(asset_path+'custom_jupiter_crash.png') // Font loading
     ]
     defer {for font in fonts {rl.unload_font(font) } }     // Font unloading
 
