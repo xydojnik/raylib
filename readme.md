@@ -10,8 +10,8 @@
 
 ## Installation
 1. Make sure you have [**_vlang_**](https://vlang.io/) and [**_GCC_**](https://www.mingw-w64.org/) installed.
-2. Download [xydojnik/raylib](https://github.com/xydojnik/raylib) with [submodules](https://github.com/raysan5/raylib).
-3. Compile original RAYLIB (thirdparty/raylib/src) with make.
+2. Download [xydojnik/raylib](https://github.com/xydojnik/raylib) or `git clone` it to `.vmodules`. Make sure [submodules](https://github.com/raysan5/raylib) is downloaded.
+3. Compile RAYLIB (thirdparty/raylib/src) with make.
 
 Download raylib module.
 ```bash

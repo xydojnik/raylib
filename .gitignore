@@ -15,3 +15,5 @@ examples/textures/resources
 # vweb and database
 *.db
 *.js
+
+.*
