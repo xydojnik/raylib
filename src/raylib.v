@@ -2899,6 +2899,12 @@ pub fn draw_text(text string, pos_x int, pos_y int, font_size int, color Color) 
 	C.DrawText(text.str, pos_x, pos_y, font_size, color)
 }
 
+pub fn draw_text_with_background(text string, txt_pos Vector2, font_size int, padding int, txt_color Color, background_color Color) {
+    txt_width := measure_text(text.str, font_size)
+    C.DrawRectangle(txt_pos.x-padding, txt_pos.y-padding, txt_width+padding*2, font_size+padding*2, background_color)
+	C.DrawText(text.str, txt_pos.x, txt_pos.y, font_size, txt_color)
+}
+
 @[inline]
 pub fn draw_text_v(text string, pos Vector2, font_size int, color Color) {
 	C.DrawText(text.str, pos.x, pos.y, font_size, color)

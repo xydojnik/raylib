@@ -137,7 +137,6 @@ pub fn Texture.unload(t Texture) {
 
 
 
-
 // Struct methods
 pub fn (t Texture) set_slot(slot int) {
     rl_active_texture_slot(slot)
@@ -211,6 +210,11 @@ pub fn (t Texture) draw_npatch(npatch_info NPatchInfo, dest Rectangle, origin Ve
 
 @[inline]
 pub fn (t Texture) unload() { C.UnloadTexture(t) }
+
+@[inline]
+pub fn (ts []Texture) unload() {
+    for t in ts { C.UnloadTexture(t) }
+}
 // Texture functions
 
 

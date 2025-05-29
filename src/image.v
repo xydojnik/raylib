@@ -29,9 +29,10 @@ pub fn Image.load_raw(file_name string, width int, height int, format int, heade
 	return C.LoadImageRaw(file_name.str, width, height, format, header_size)
 }
 
-@[inline]
-pub fn Image.load_anim(file_name string, frames &int) Image {
-	return C.LoadImageAnim(file_name.str, frames)
+pub fn Image.load_anim(file_name string) (Image, int) {
+    mut frames := int(0)
+	img := C.LoadImageAnim(file_name.str, &frames)
+    return img, frames
 }
 
 @[inline]
