@@ -9,7 +9,7 @@
 *   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
 *   BSD-like license that allows static linking with closed source software
 *
-*   Copyright           (c) 2015-2023 Ramon Santamaria  (@raysan5) and James Hofmann (@triplefox)
+*   Copyright           (c) 2015-2023 Ramon Santamaria (@raysan5) and James Hofmann (@triplefox)
 *   Translated&Modified (c) 2024      Fedorov Alexandr (@xydojnik)
 *
 ********************************************************************************************/
@@ -57,7 +57,7 @@ fn main() {
     screen_width  := 800
     screen_height := 450
 
-    rl.init_window(screen_width, screen_height, "raylib [audio] example - raw audio streaming")
+    rl.init_window(screen_width, screen_height, 'raylib [audio] example - raw audio streaming')
     defer { rl.close_window() }       // Close window and OpenGL context
 
     rl.init_audio_device()            // Initialize audio device
@@ -69,7 +69,7 @@ fn main() {
     stream := rl.load_audio_stream(44100, 16, 1)
     defer { rl.unload_audio_stream(stream) } // Close raw audio stream and delete buffers from RAM
 
-    rl.set_audio_stream_callback(stream, audio_input_callback)
+    rl.set_audio_stream_callback(stream, &audio_input_callback)
 
     // Buffer for the single cycle waveform we are synthesizing
     // short *data = (short *)malloc(sizeof(short)*max_samples)
@@ -171,8 +171,8 @@ fn main() {
 
             rl.clear_background(rl.raywhite)
 
-        rl.draw_text("sine frequency: ${int(frequency)}", rl.get_screen_width() - 220, 10, 20, rl.red)
-            rl.draw_text("click mouse button to change frequency or pan", 10, 10, 20, rl.darkgray)
+        rl.draw_text('sine frequency: ${int(frequency)}', rl.get_screen_width() - 220, 10, 20, rl.red)
+            rl.draw_text('click mouse button to change frequency or pan', 10, 10, 20, rl.darkgray)
 
             // Draw the current buffer state proportionate to the screen
             for i in 0..screen_width {
