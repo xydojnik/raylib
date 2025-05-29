@@ -9,7 +9,7 @@
 *   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
 *   BSD-like license that allows static linking with closed source software
 *
-*   Copyright           (c) 2018-2023 Ramon Santamaria  (@raysan5)
+*   Copyright           (c) 2018-2023 Ramon Santamaria (@raysan5)
 *   Translated&Modified (c) 2024      Fedorov Alexandr (@xydojnik)
 *
 ********************************************************************************************/
@@ -35,7 +35,7 @@ fn main() {
     mut moon_radius        := f32(0.16)
     mut moon_orbit_radius  := f32( 1.5)
 
-    rl.init_window(screen_width, screen_height, "raylib [models] example - rlgl module usage with push/pop matrix transformations")
+    rl.init_window(screen_width, screen_height, 'raylib [models] example - rlgl module usage with push/pop matrix transformations')
 
     // Define the camera to look into our 3d world
     mut camera := rl.Camera {
@@ -101,12 +101,12 @@ fn main() {
                 rl.rl_pop_matrix()
 
                 // Some reference elements (not affected by previous matrix transformations)
-                rl.draw_circle_3d(rl.Vector3 { 0.0, 0.0, 0.0 }, earth_orbit_radius, rl.Vector3 { 1, 0, 0 }, 90.0, rl.Color.fade(rl.red, 0.5))
+                rl.draw_circle_3d(rl.Vector3 {}, earth_orbit_radius, rl.Vector3 {x:1}, 90.0, rl.Color.fade(rl.red, 0.5))
                 rl.draw_grid(20, 1.0)
 
             rl.end_mode_3d()
 
-            rl.draw_text("EARTH ORBITING AROUND THE SUN!", 400, 10, 20, rl.maroon)
+            rl.draw_text('EARTH ORBITING AROUND THE SUN!', 400, 10, 20, rl.maroon)
             rl.draw_fps(10, 10)
 
         rl.end_drawing()

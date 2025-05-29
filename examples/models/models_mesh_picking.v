@@ -9,7 +9,7 @@
 *   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
 *   BSD-like license that allows static linking with closed source software
 *
-*   Copyright           (c) 2017-2023 Joel Davis        (@joeld42) and Ramon Santamaria (@raysan5)
+*   Copyright           (c) 2017-2023 Joel Davis       (@joeld42) and Ramon Santamaria (@raysan5)
 *   Translated&Modified (c) 2024      Fedorov Alexandr (@xydojnik)
 *
 ********************************************************************************************/
@@ -21,9 +21,7 @@ import raylib as rl
 
 
 const asset_path = @VMODROOT+'/thirdparty/raylib/examples/models/resources/'
-
-
-const flt_max = f32(340282346638528859811704183484516925440.0)     // Maximum value of a float, from bit pattern 01111111011111111111111111111111
+const flt_max    = f32(340282346638528859811704183484516925440.0)     // Maximum value of a float, from bit pattern 01111111011111111111111111111111
 
 
 //------------------------------------------------------------------------------------
@@ -58,7 +56,7 @@ fn main() {
     tower.set_texture(0, rl.material_map_diffuse, texture)                 // Set model diffuse texture
 
     mut tower_pos  := rl.Vector3 {}                                        // Set model position
-    mut tower_bbox := rl.get_mesh_bounding_box(unsafe { tower.meshes[0] }) // Get mesh bounding box
+    mut tower_bbox := tower.get_mesh(0).get_bounding_box()                 // Get mesh bounding box
 
     // Ground quad
     g0 := rl.Vector3 { -50.0, 0.0, -50.0 }

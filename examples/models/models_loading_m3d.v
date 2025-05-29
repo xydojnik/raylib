@@ -56,7 +56,7 @@ fn main() {
 
     // Load model
     model := rl.load_model(model_file_name) // Load the bind-pose model mesh and basic data
-    defer { rl.unload_model(model) }
+    defer { model.unload() }
 
     // Load animations
     mut anim_frame_counter := int(0)

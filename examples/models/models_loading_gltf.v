@@ -14,7 +14,7 @@
 *   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
 *   BSD-like license that allows static linking with closed source software
 *
-*   Copyright           (c) 2020-2023 Ramon Santamaria  (@raysan5)
+*   Copyright           (c) 2020-2023 Ramon Santamaria (@raysan5)
 *   Translated&Modified (c) 2024      Fedorov Alexandr (@xydojnik)
 *
 ********************************************************************************************/
@@ -63,7 +63,7 @@ fn main() {
     anims_count      := u32(model_animations.len)
     defer { model_animations.unload() }
 
-    mut current_anim_name := unsafe { cstring_to_vstring(&model_animations[0].name[0]) }
+    mut current_anim_name := unsafe { (&model_animations[0].name[0]).vstring() }
 
     rl.disable_cursor()         // Limit cursor to relative movement inside the window
     rl.set_target_fps(60)       // Set our game to run at 60 frames-per-second
@@ -80,13 +80,13 @@ fn main() {
             anim_index = (anim_index+1)%anims_count
             unsafe {
                 anim              = model_animations[anim_index]
-                current_anim_name = cstring_to_vstring(&anim.name[0])
+                current_anim_name = (&anim.name[0]).vstring()
             }
         } else if rl.is_mouse_button_pressed(rl.mouse_button_left) {
             anim_index = (anim_index+anims_count-1)%anims_count
             unsafe {
                 anim              = model_animations[anim_index]
-                current_anim_name = cstring_to_vstring(&anim.name[0])
+                current_anim_name = (&anim.name[0]).vstring()
             }
         }
 

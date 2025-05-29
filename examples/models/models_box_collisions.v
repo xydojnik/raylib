@@ -7,7 +7,7 @@
 *   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
 *   BSD-like license that allows static linking with closed source software
 *
-*   Copyright           (c) 2015-2023 Ramon Santamaria  (@raysan5)
+*   Copyright           (c) 2015-2023 Ramon Santamaria (@raysan5)
 *   Translated&Modified (c) 2024      Fedorov Alexandr (@xydojnik)
 *
 ********************************************************************************************/
@@ -27,7 +27,7 @@ fn main() {
     screen_width  := 800
     screen_height := 450
 
-    rl.init_window(screen_width, screen_height, "raylib [models] example - box collisions")
+    rl.init_window(screen_width, screen_height, 'raylib [models] example - box collisions')
     defer { rl.close_window() }       // Close window and OpenGL context
 
     // Define the camera to look into our 3d world
@@ -117,7 +117,7 @@ fn main() {
 
             rl.end_mode_3d()
 
-            rl.draw_text("Move player with cursors to collide", 220, 40, 20, rl.gray)
+            rl.draw_text('Move player with cursors to collide', 220, 40, 20, rl.gray)
 
             rl.draw_fps(10, 10)
 

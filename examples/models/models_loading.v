@@ -89,8 +89,8 @@ fn main() {
     mut selected_model_name   := rl.get_file_name(model_file_path)
     mut selected_texture_name := rl.get_file_name(texture_file_path)
     
-    mut model   := rl.load_model(model_file_path)          // Load model
-    mut texture := rl.load_texture(texture_file_path)      // Load model texture
+    mut model   := rl.Model.load(model_file_path)          // Load model
+    mut texture := rl.Texture.load(texture_file_path)      // Load model texture
 
     model.set_texture(0, rl.material_map_diffuse, texture) // Set map diffuse texture
     mut rotate_around_target := false
@@ -98,8 +98,8 @@ fn main() {
     // De-Initialization
     //--------------------------------------------------------------------------------------
     defer {
-        rl.unload_texture(texture)  // Unload texture
-        rl.unload_model(model)      // Unload model
+        texture.unload() // Unload texture
+        model.unload()   // Unload model
     }
     //--------------------------------------------------------------------------------------
     position := rl.Vector3 {}       // Set model position

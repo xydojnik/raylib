@@ -7,7 +7,7 @@
 *   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
 *   BSD-like license that allows static linking with closed source software
 *
-*   Copyright           (c) 2017-2023 Ramon Santamaria  (@raysan5)
+*   Copyright           (c) 2017-2023 Ramon Santamaria (@raysan5)
 *   Translated&Modified (c) 2024      Fedorov Alexandr (@xydojnik)
 *
 ********************************************************************************************/
@@ -74,7 +74,7 @@ fn main() {
         skybox_file_name = asset_path+'dresden_square_2k.hdr' // it did'nt work
 
         // Load HDR panorama (sphere) texture
-        panorama := rl.load_texture(skybox_file_name)
+        panorama := rl.Texture.load(skybox_file_name)
         // defer { rl.unload_texture(panorama) }        // Texture not required anymore, cubemap already generated
 
         // Generate cubemap (texture with 6 quads-cube-mapping) from panorama HDR texture
@@ -163,7 +163,6 @@ fn main() {
 
             rl.end_mode_3d()
             
-            // rl.draw_texture_ex(texture, rl.Vector2 { 0, 0 }, 0.0, 0.5, rl.white)
 
             if use_hdr {
                 rl.draw_text(

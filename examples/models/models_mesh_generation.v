@@ -7,7 +7,7 @@
 *   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
 *   BSD-like license that allows static linking with closed source software
 *
-*   Copyright           (c) 2017-2023 Ramon Santamaria  (@raysan5)
+*   Copyright           (c) 2017-2023 Ramon Santamaria (@raysan5)
 *   Translated&Modified (c) 2024      Fedorov Alexandr (@xydojnik)
 *
 ********************************************************************************************/
@@ -29,47 +29,48 @@ fn main() {
     screen_width  := 800
     screen_height := 450
 
-    rl.init_window(screen_width, screen_height, "raylib [models] example - mesh generation")
-    defer { rl.close_window() }// Close window and OpenGL context
+    rl.init_window(screen_width, screen_height, 'raylib [models] example - mesh generation')
+    defer { rl.close_window() }             // Close window and OpenGL context
 
     // We generate a checked image for texturing
     checked := rl.gen_image_checked(2, 2, 1, 1, rl.red, rl.green)
 
     texture := rl.load_texture_from_image(checked)
-    defer { rl.unload_texture(texture) }// Unload texture
+    defer { rl.unload_texture(texture) }    // Unload texture
 
     rl.unload_image(checked)
 
     mut models := []rl.Model{cap: num_models}
-    defer { for model in models { rl.unload_model(model) } } // Unload models data (GPU VRAM)
+    defer { models.unload() }               // Unload models data (GPU VRAM)
 
-    models << rl.load_model_from_mesh(rl.gen_mesh_plane(2, 2, 4, 3))
-    models << rl.load_model_from_mesh(rl.gen_mesh_cube(2.0, 1.0, 2.0))
-    models << rl.load_model_from_mesh(rl.gen_mesh_sphere(2, 32, 32))
-    models << rl.load_model_from_mesh(rl.gen_mesh_hemi_sphere(2, 16, 16))
-    models << rl.load_model_from_mesh(rl.gen_mesh_cylinder(1, 2, 16))
-    models << rl.load_model_from_mesh(rl.gen_mesh_torus(0.25, 4.0, 16, 32))
-    models << rl.load_model_from_mesh(rl.gen_mesh_knot(1.0, 2.0, 16, 128))
-    models << rl.load_model_from_mesh(rl.gen_mesh_poly(5, 2.0))
-    models << rl.load_model_from_mesh(gen_mesh_custom())
-    
-    // Generated meshes could be exported as .obj files
-    // unsafe {
-    //     rl.export_mesh(models[0].meshes[0], "plane.obj")
-    //     rl.export_mesh(models[1].meshes[0], "cube.obj")
-    //     rl.export_mesh(models[2].meshes[0], "sphere.obj")
-    //     rl.export_mesh(models[3].meshes[0], "hemisphere.obj")
-    //     rl.export_mesh(models[4].meshes[0], "cylinder.obj")
-    //     rl.export_mesh(models[5].meshes[0], "torus.obj")
-    //     rl.export_mesh(models[6].meshes[0], "knot.obj")
-    //     rl.export_mesh(models[7].meshes[0], "poly.obj")
-    //     rl.export_mesh(models[8].meshes[0], "custom.obj")
-    // }
+    models << rl.Model.load_from_mesh(rl.gen_mesh_plane(2, 2, 4, 3))
+    models << rl.Model.load_from_mesh(rl.gen_mesh_cube(2.0, 1.0, 2.0))
+    models << rl.Model.load_from_mesh(rl.gen_mesh_sphere(2, 32, 32))
+    models << rl.Model.load_from_mesh(rl.gen_mesh_hemi_sphere(2, 16, 16))
+    models << rl.Model.load_from_mesh(rl.gen_mesh_cylinder(1, 2, 16))
+    models << rl.Model.load_from_mesh(rl.gen_mesh_torus(0.25, 4.0, 16, 32))
+    models << rl.Model.load_from_mesh(rl.gen_mesh_knot(1.0, 2.0, 16, 128))
+    models << rl.Model.load_from_mesh(rl.gen_mesh_poly(5, 2.0))
+    models << rl.Model.load_from_mesh(gen_mesh_custom())
 
     // Set checked texture as default diffuse component for all models material
-    for model in models {
-        unsafe { model.materials[0].maps[rl.material_map_diffuse].texture = texture }
+    for mut model in models {
+        model.set_texture(0, rl.material_map_diffuse, texture)
     }
+
+    mut current_model := 0
+
+    model_names := [
+        'plane',
+        'cube',
+        'sphere',
+        'hemisphere',
+        'cylinder',
+        'torus',
+        'knot',
+        'poly',
+        'custom'
+    ]!
 
     // Define the camera to look into our 3d world
     mut camera := rl.Camera {
@@ -81,9 +82,7 @@ fn main() {
     }
 
     // Model drawing position
-    mut position := rl.Vector3 { 0.0, 0.0, 0.0 }
-
-    mut current_model := 0
+    position := rl.Vector3 {}
 
     rl.set_target_fps(60)            // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -105,6 +104,13 @@ fn main() {
             current_model--
             if current_model < 0 { current_model = models.len - 1 }
         }
+
+        if rl.is_key_pressed(rl.key_space) {
+            for i, model in models {
+                // Generated meshes could be exported as .obj files
+                model.get_mesh(0).export('${model_names[i]}.obj')
+            }
+        }
         //----------------------------------------------------------------------------------
 
         // Draw
@@ -122,20 +128,10 @@ fn main() {
 
             rl.draw_rectangle(30, 400, 310, 30, rl.Color.fade(rl.skyblue, 0.5))
             rl.draw_rectangle_lines(30, 400, 310, 30, rl.Color.fade(rl.darkblue, 0.5))
-            rl.draw_text("MOUSE LEFT BUTTON to CYCLE PROCEDURAL MODELS", 40, 410, 10, rl.blue)
+            rl.draw_text('MOUSE LEFT BUTTON to CYCLE PROCEDURAL MODELS', 40, 410, 10, rl.blue)
 
-            match current_model {
-                0 { rl.draw_text("PLANE",             680, 10, 20, rl.darkblue) }
-                1 { rl.draw_text("CUBE",              680, 10, 20, rl.darkblue) }
-                2 { rl.draw_text("SPHERE",            680, 10, 20, rl.darkblue) }
-                3 { rl.draw_text("HEMISPHERE",        640, 10, 20, rl.darkblue) }
-                4 { rl.draw_text("CYLINDER",          680, 10, 20, rl.darkblue) }
-                5 { rl.draw_text("TORUS",             680, 10, 20, rl.darkblue) }
-                6 { rl.draw_text("KNOT",              680, 10, 20, rl.darkblue) }
-                7 { rl.draw_text("POLY",              680, 10, 20, rl.darkblue) }
-                8 { rl.draw_text("Custom (triangle)", 580, 10, 20, rl.darkblue) }
-                else {}
-            }
+            rl.draw_text('Press SPACE to export all models.',   20, 10, 15, rl.darkgray)
+            rl.draw_text(model_names[current_model].to_upper(), 20, 30, 20, rl.darkblue)
 
         rl.end_drawing()
     }
@@ -189,7 +185,7 @@ fn gen_mesh_custom() rl.Mesh {
         mesh.texcoords[5] = 0
     }
     // Upload mesh data from CPU (RAM) to GPU (VRAM) memory
-    rl.upload_mesh(&mesh, false)
+    mesh.upload(false)
 
     return mesh
 }

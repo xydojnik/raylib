@@ -42,7 +42,7 @@ fn main() {
         projection : rl.camera_perspective           // Camera projection type
     }
 
-    image   := rl.Image.load(asset_path+'heightmap.png')             // Load heightmap image (RAM)
+    image   := rl.Image.load(asset_path+'heightmap.png')            // Load heightmap image (RAM)
     texture := rl.Texture.load_from_image(image)                    // Convert image to texture (VRAM)
     defer { texture.unload() }                                      // Unload texture
 

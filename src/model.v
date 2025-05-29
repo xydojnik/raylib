@@ -74,6 +74,13 @@ pub fn (m Model) unload() {
 	C.UnloadModel(m)
 }
 
+@[inline]
+pub fn (marr []Model) unload() {
+    for m in marr {
+        C.UnloadModel(m)
+    }
+}
+
 pub fn (mut m Model) set_texture(mat_index int, map_id int, texture Texture) {
     assert mat_index >= 0 && mat_index < m.materialCount
     unsafe { m.materials[mat_index].maps[map_id].texture = texture }
