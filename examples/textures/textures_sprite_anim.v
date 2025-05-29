@@ -1,5 +1,3 @@
-module main
-
 /*******************************************************************************************
 *
 *   raylib [textures] example - Sprite animation
@@ -9,13 +7,17 @@ module main
 *   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
 *   BSD-like license that allows static linking with closed source software
 *
-*   Copyright           (c) 2014-2023 Ramon Santamaria  (@raysan5)
+*   Copyright           (c) 2014-2023 Ramon Santamaria (@raysan5)
 *   Translated&Modified (c) 2024      Fedorov Alexandr (@xydojnik)
 *
 ********************************************************************************************/
 
+module main
+
+
 import raylib as rl
 
+const asset_path      = @VMODROOT+'/thirdparty/raylib/examples/textures/resources/'
 const max_frame_speed = int(15)
 const min_frame_speed = int(1)
 
@@ -28,12 +30,12 @@ fn main() {
     screen_width  := 800
     screen_height := 450
 
-    rl.init_window(screen_width, screen_height, "raylib [texture] example - sprite anim")
-    defer { rl.close_window() }                       // Close window and OpenGL context
+    rl.init_window(screen_width, screen_height, 'raylib [texture] example - sprite anim')
+    defer { rl.close_window() }      // Close window and OpenGL context
 
     // NOTE: Textures MUST be loaded after Window initialization (OpenGL context is required)
-    scarfy := rl.load_texture("resources/scarfy.png") // Texture loading
-    defer { rl.unload_texture(scarfy) }               // Texture unloading
+    scarfy := rl.Texture.load(asset_path+'scarfy.png') // Texture loading
+    defer { scarfy.unload() }        // Texture unloading
 
     position  := rl.Vector2 { 350.0, 280.0 }
     mut frame_rec := rl.Rectangle { 0.0, 0.0, f32(scarfy.width)/6, f32(scarfy.height) }
@@ -76,13 +78,13 @@ fn main() {
 
             rl.clear_background(rl.raywhite)
 
-            rl.draw_texture(scarfy, 15, 40, rl.white)
+            scarfy.draw(15, 40, rl.white)
             rl.draw_rectangle_lines(15, 40, scarfy.width, scarfy.height, rl.lime)
         rl.draw_rectangle_lines(15 + int(frame_rec.x), 40 + int(frame_rec.y), int(frame_rec.width), int(frame_rec.height), rl.red)
 
-            rl.draw_text("FRAME SPEED: ", 165, 210, 10, rl.darkgray)
-            rl.draw_text("${frames_speed} FPS", 575, 210, 10, rl.darkgray)
-            rl.draw_text("PRESS RIGHT/LEFT KEYS to CHANGE SPEED!", 290, 240, 10, rl.darkgray)
+            rl.draw_text('FRAME SPEED: ', 165, 210, 10, rl.darkgray)
+            rl.draw_text('${frames_speed} FPS', 575, 210, 10, rl.darkgray)
+            rl.draw_text('PRESS RIGHT/LEFT KEYS to CHANGE SPEED!', 290, 240, 10, rl.darkgray)
 
             for i in 0..max_frame_speed {
                 if i < frames_speed {
@@ -91,9 +93,9 @@ fn main() {
                 rl.draw_rectangle_lines(250 + 21*i, 205, 20, 20, rl.maroon)
             }
 
-            rl.draw_texture_rec(scarfy, frame_rec, position, rl.white)  // Draw part of the texture
+            scarfy.draw_rec(frame_rec, position, rl.white)  // Draw part of the texture
 
-            rl.draw_text("(c) Scarfy sprite by Eiden Marsal", screen_width - 200, screen_height - 20, 10, rl.gray)
+            rl.draw_text('(c) Scarfy sprite by Eiden Marsal', screen_width - 200, screen_height - 20, 10, rl.gray)
 
         rl.end_drawing()
     }

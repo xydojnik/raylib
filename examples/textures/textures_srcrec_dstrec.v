@@ -1,5 +1,3 @@
-module main
-
 /*******************************************************************************************
 *
 *   raylib [textures] example - Texture source and destination rectangles
@@ -9,12 +7,17 @@ module main
 *   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
 *   BSD-like license that allows static linking with closed source software
 *
-*   Copyright           (c) 2015-2023 Ramon Santamaria  (@raysan5)
+*   Copyright           (c) 2015-2023 Ramon Santamaria (@raysan5)
 *   Translated&Modified (c) 2024      Fedorov Alexandr (@xydojnik)
 *
 ********************************************************************************************/
 
+module main
+
+
 import raylib as rl
+
+const asset_path = @VMODROOT+'/thirdparty/raylib/examples/textures/resources/'
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -25,12 +28,12 @@ fn main() {
     screen_width  := 800
     screen_height := 450
 
-    rl.init_window(screen_width, screen_height, "raylib [textures] examples - texture source and destination rectangles")
-    defer { rl.close_window() }                       // Close window and OpenGL context
+    rl.init_window(screen_width, screen_height, 'raylib [textures] examples - texture source and destination rectangles')
+    defer { rl.close_window() }                         // Close window and OpenGL context
 
     // NOTE: Textures MUST be loaded after Window initialization (OpenGL context is required)
-    scarfy := rl.load_texture("resources/scarfy.png") // Texture loading
-    defer { rl.unload_texture(scarfy) }               // Texture unloading
+    scarfy := rl.Texture.load(asset_path+'scarfy.png')  // Texture loading
+    defer { rl.unload_texture(scarfy) }                 // Texture unloading
 
     frame_width  := scarfy.width/6
     frame_height := scarfy.height
@@ -77,7 +80,7 @@ fn main() {
             rl.draw_line(int(dest_rec.x), 0, int(dest_rec.x), screen_height, rl.gray)
             rl.draw_line(0, int(dest_rec.y), screen_width, int(dest_rec.y), rl.gray)
 
-            rl.draw_text("(c) Scarfy sprite by Eiden Marsal", screen_width - 200, screen_height - 20, 10, rl.gray)
+            rl.draw_text('(c) Scarfy sprite by Eiden Marsal', screen_width - 200, screen_height - 20, 10, rl.gray)
 
         rl.end_drawing()
     }

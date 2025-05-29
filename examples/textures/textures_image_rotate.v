@@ -1,5 +1,3 @@
-module main
-
 /*******************************************************************************************
 *
 *   raylib [textures] example - Image Rotation
@@ -9,13 +7,17 @@ module main
 *   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
 *   BSD-like license that allows static linking with closed source software
 *
-*   Copyright           (c) 2014-2023 Ramon Santamaria  (@raysan5)
+*   Copyright           (c) 2014-2023 Ramon Santamaria (@raysan5)
 *   Translated&Modified (c) 2024      Fedorov Alexandr (@xydojnik)
 *
 ********************************************************************************************/
 
+module main
+
+
 import raylib as rl
 
+const asset_path   = @VMODROOT+'/thirdparty/raylib/examples/textures/resources/'
 const num_textures = 3
 
 
@@ -28,24 +30,24 @@ fn main() {
     screen_width  := 800
     screen_height := 450
 
-    rl.init_window(screen_width, screen_height, "raylib [textures] example - texture rotation")
+    rl.init_window(screen_width, screen_height, 'raylib [textures] example - texture rotation')
     defer { rl.close_window() }               // Close window and OpenGL context
 
     // NOTE: Textures MUST be loaded after Window initialization (OpenGL context is required)
-    image45     := rl.load_image("resources/raylib_logo.png")
-    image90     := rl.load_image("resources/raylib_logo.png")
-    image_neg90 := rl.load_image("resources/raylib_logo.png")
+    mut image45     := rl.Image.load(asset_path+'raylib_logo.png')
+    mut image90     := rl.Image.load(asset_path+'raylib_logo.png')
+    mut image_neg90 := rl.Image.load(asset_path+'raylib_logo.png')
 
-    rl.image_rotate(&image45,      45)
-    rl.image_rotate(&image90,      90)
-    rl.image_rotate(&image_neg90, -90)
+    image45.rotate(45)
+    image90.rotate(90)
+    image_neg90.rotate(-90)
 
-    mut textures := []rl.Texture2D { len: num_textures }
-    defer { for texture in textures { rl.unload_texture(texture) } }
+    mut textures := []rl.Texture { len: num_textures }
+    defer { textures.unload() }
     
-    textures[0] = rl.load_texture_from_image(image45)
-    textures[1] = rl.load_texture_from_image(image90)
-    textures[2] = rl.load_texture_from_image(image_neg90)
+    textures[0] = rl.Texture.load_from_image(image45)
+    textures[1] = rl.Texture.load_from_image(image90)
+    textures[2] = rl.Texture.load_from_image(image_neg90)
     
     mut current_texture := int(0)
     //---------------------------------------------------------------------------------------
@@ -67,7 +69,7 @@ fn main() {
 
             rl.draw_texture(textures[current_texture], screen_width/2 - textures[current_texture].width/2, screen_height/2 - textures[current_texture].height/2, rl.white)
 
-            rl.draw_text("Press LEFT MOUSE BUTTON to rotate the image clockwise", 250, 420, 10, rl.darkgray)
+            rl.draw_text('Press LEFT MOUSE BUTTON to rotate the image clockwise', 250, 420, 10, rl.darkgray)
 
         rl.end_drawing()
     }

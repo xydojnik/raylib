@@ -1,5 +1,3 @@
-module main
-
 /*******************************************************************************************
 *
 *   raylib [textures] example - Bunnymark
@@ -9,14 +7,17 @@ module main
 *   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
 *   BSD-like license that allows static linking with closed source software
 *
-*   Copyright           (c) 2014-2023 Ramon Santamaria  (@raysan5)
+*   Copyright           (c) 2014-2023 Ramon Santamaria (@raysan5)
 *   Translated&Modified (c) 2024      Fedorov Alexandr (@xydojnik)
 *
 ********************************************************************************************/
 
+module main
+
+
 import raylib as rl
 
-
+const asset_path  = @VMODROOT+'/thirdparty/raylib/examples/textures/resources/'
 const max_bunnies = int(50000)    // 50K bunnies limit
 
 // This is the maximum amount of elements (quads) per batch
@@ -39,12 +40,12 @@ fn main() {
     screen_width  := 800
     screen_height := 450
 
-    rl.init_window(screen_width, screen_height, "raylib [textures] example - bunnymark")
+    rl.init_window(screen_width, screen_height, 'raylib [textures] example - bunnymark')
     defer { rl.close_window()  }            // Close window and OpenGL context
 
     // Load bunny texture
-    tex_bunny := rl.load_texture("resources/wabbit_alpha.png")
-    defer { rl.unload_texture(tex_bunny) }  // Unload bunny texture
+    tex_bunny := rl.Texture.load(asset_path+'wabbit_alpha.png')
+    defer { tex_bunny.unload() }  // Unload bunny texture
 
     // Bunny *bunnies = (Bunny *)malloc(max_bunnies*sizeof(Bunny))    // Bunnies array
     mut bunnies       := []Bunny{len: max_bunnies}
@@ -113,12 +114,11 @@ fn main() {
             }
 
             rl.draw_rectangle(0, 0, screen_width, 40, rl.black)
-            rl.draw_text("bunnies: ${bunnies_count}", 120, 10, 20, rl.green)
-            rl.draw_text("batched draw calls: ${1 + bunnies_count/max_batch_elements}", 320, 10, 20, rl.maroon)
+            rl.draw_text('bunnies: ${bunnies_count}', 120, 10, 20, rl.green)
+            rl.draw_text('batched draw calls: ${1 + bunnies_count/max_batch_elements}', 320, 10, 20, rl.maroon)
 
             rl.draw_fps(10, 10)
 
         rl.end_drawing()
-        //----------------------------------------------------------------------------------
     }
 }

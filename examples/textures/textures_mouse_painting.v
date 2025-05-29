@@ -1,5 +1,3 @@
-module main
-
 /*******************************************************************************************
 *
 *   raylib [textures] example - Mouse painting
@@ -11,10 +9,13 @@ module main
 *   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
 *   BSD-like license that allows static linking with closed source software
 *
-*   Copyright           (c) 2019-2023 Chris Dill        (@MysteriousSpace) and Ramon Santamaria (@raysan5)
+*   Copyright           (c) 2019-2023 Chris Dill       (@MysteriousSpace) and Ramon Santamaria (@raysan5)
 *   Translated&Modified (c) 2024      Fedorov Alexandr (@xydojnik)
 *
 ********************************************************************************************/
+
+module main
+
 
 import raylib as rl
 
@@ -30,7 +31,7 @@ fn main() {
     screen_width  := 800
     screen_height := 450
 
-    rl.init_window(screen_width, screen_height, "raylib [textures] example - mouse painting")
+    rl.init_window(screen_width, screen_height, 'raylib [textures] example - mouse painting')
     defer { rl.close_window() }                 // Close window and OpenGL context
 
     // Colors to choose from
@@ -157,7 +158,7 @@ fn main() {
         if btn_save_mouse_hover && (rl.is_mouse_button_released(rl.mouse_button_left) || rl.is_key_pressed(rl.key_s)) {
             image := rl.load_image_from_texture(target.texture)
             rl.image_flip_vertical(&image)
-            rl.export_image(image, "my_amazing_texture_painting.png")
+            rl.export_image(image, 'my_amazing_texture_painting.png')
             rl.unload_image(image)
             show_save_message = true
         }
@@ -223,14 +224,14 @@ fn main() {
             btn_color := if btn_save_mouse_hover { rl.red } else { rl.black }
             // Draw save image button
             rl.draw_rectangle_lines_ex(btn_save_rec, 2, btn_color)
-            rl.draw_text("SAVE!", 755, 20, 10, btn_color)
+            rl.draw_text('SAVE!', 755, 20, 10, btn_color)
         }
 
         // Draw save image message
         if show_save_message {
             rl.draw_rectangle(0, 0, rl.get_screen_width(), rl.get_screen_height(), rl.Color.fade(rl.raywhite, 0.8))
             rl.draw_rectangle(0, 150, rl.get_screen_width(), 80, rl.black)
-            rl.draw_text("IMAGE SAVED:  my_amazing_texture_painting.png", 150, 180, 20, rl.raywhite)
+            rl.draw_text('IMAGE SAVED:  my_amazing_texture_painting.png', 150, 180, 20, rl.raywhite)
         }
 
         rl.end_drawing()

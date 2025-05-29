@@ -1,5 +1,3 @@
-module main
-
 /*******************************************************************************************
 *
 *   raylib [textures] example - Draw a texture along a segmented curve
@@ -12,18 +10,23 @@ module main
 *   BSD-like license that allows static linking with closed source software
 *
 *   Copyright           (c) 2022-2023 Jeffery Myers and Ramon Santamaria (@raysan5)
-*   Translated&Modified (c) 2024 Fedorov Alexandr                       (@xydojnik)
+*   Translated&Modified (c) 2024 Fedorov Alexandr                        (@xydojnik)
 *
 ********************************************************************************************/
 
+module main
+
+
 import raylib as rl
 
+
+const asset_path = @VMODROOT+'/thirdparty/raylib/examples/textures/resources/'
 
 //----------------------------------------------------------------------------------
 // Global Variables Definition
 //----------------------------------------------------------------------------------
 __global(
-    tex_road                     = rl.Texture2D {}
+    tex_road                     = rl.Texture {}
     show_curve                   = false
     curve_width                  = f32(50)
     curve_segments               = int(24)
@@ -44,11 +47,11 @@ fn main() {
     screen_height := 450
 
     rl.set_config_flags(rl.flag_vsync_hint | rl.flag_msaa_4x_hint)
-    rl.init_window(screen_width, screen_height, "raylib [textures] examples - textured curve")
+    rl.init_window(screen_width, screen_height, 'raylib [textures] examples - textured curve')
     defer { rl.close_window() }             // Close window and OpenGL context
 
     // Load the road texture
-    tex_road = rl.load_texture("resources/road.png")
+    tex_road = rl.Texture.load(asset_path+'road.png')
     defer { rl.unload_texture(tex_road) }
     
     rl.set_texture_filter(tex_road, rl.texture_filter_bilinear)
@@ -140,18 +143,12 @@ fn main() {
             rl.draw_circle_v(curve_end_position_tangent, 5, rl.darkgreen)
 
             // Draw usage info
-            rl.draw_text("Drag points to move curve, press SPACE to show/hide base curve",   10, 10, 10, rl.darkgray)
-            rl.draw_text("Curve width: ${curve_width} (Use + and - to adjust)",              10, 30, 10, rl.darkgray)
-            rl.draw_text("Curve segments: ${curve_segments} (Use LEFT and RIGHT to adjust)", 10, 50, 10, rl.darkgray)
+            rl.draw_text('Drag points to move curve, press SPACE to show/hide base curve',   10, 10, 10, rl.darkgray)
+            rl.draw_text('Curve width: ${curve_width} (Use + and - to adjust)',              10, 30, 10, rl.darkgray)
+            rl.draw_text('Curve segments: ${curve_segments} (Use LEFT and RIGHT to adjust)', 10, 50, 10, rl.darkgray)
             
         rl.end_drawing()
-        //----------------------------------------------------------------------------------
     }
-
-    // De-Initialization
-    //--------------------------------------------------------------------------------------
-    
-    //--------------------------------------------------------------------------------------
 }
 
 //----------------------------------------------------------------------------------

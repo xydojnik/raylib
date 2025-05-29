@@ -1,5 +1,3 @@
-module main
-
 /*******************************************************************************************
 *
 *   raylib [textures] example - Background scrolling
@@ -9,12 +7,18 @@ module main
 *   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
 *   BSD-like license that allows static linking with closed source software
 *
-*   Copyright           (c) 2019-2023 Ramon Santamaria  (@raysan5)
+*   Copyright           (c) 2019-2023 Ramon Santamaria (@raysan5)
 *   Translated&Modified (c) 2024      Fedorov Alexandr (@xydojnik)
 *
 ********************************************************************************************/
 
+module main
+
 import raylib as rl
+
+
+const asset_path = @VMODROOT+'/thirdparty/raylib/examples/textures/resources/'
+
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -25,18 +29,18 @@ fn main() {
     screen_width  := 800
     screen_height := 450
 
-    rl.init_window(screen_width, screen_height, "raylib [textures] example - background scrolling")
+    rl.init_window(screen_width, screen_height, 'raylib [textures] example - background scrolling')
     defer { rl.close_window() }        // Close window and OpenGL context
 
     // NOTE: Be careful, background width must be equal or bigger than screen width
     // if not, texture should be draw more than two times for scrolling effect
-    background := rl.load_texture("resources/cyberpunk_street_background.png")
-    midground  := rl.load_texture("resources/cyberpunk_street_midground.png")
-    foreground := rl.load_texture("resources/cyberpunk_street_foreground.png")
+    background := rl.Texture.load(asset_path+'cyberpunk_street_background.png')
+    midground  := rl.Texture.load(asset_path+'cyberpunk_street_midground.png')
+    foreground := rl.Texture.load(asset_path+'cyberpunk_street_foreground.png')
     defer {
-        rl.unload_texture(background)  // Unload background texture
-        rl.unload_texture(midground)   // Unload midground texture
-        rl.unload_texture(foreground)  // Unload foreground texture
+        background.unload()  // Unload background texture
+        midground.unload()   // Unload midground texture
+        foreground.unload()  // Unload foreground texture
     }
 
     mut scrolling_back := f32(0.0)
@@ -64,7 +68,7 @@ fn main() {
         //----------------------------------------------------------------------------------
         rl.begin_drawing()
 
-            rl.clear_background(rl.get_color(0x052c46ff))
+            rl.clear_background(rl.Color.get(0x052c46ff))
 
             // Draw background image twice
             // NOTE: Texture is scaled twice its size
@@ -79,8 +83,8 @@ fn main() {
             rl.draw_texture_ex(foreground, rl.Vector2 { scrolling_fore, 70 }, 0.0, 2.0, rl.white)
             rl.draw_texture_ex(foreground, rl.Vector2 { foreground.width*2 + scrolling_fore, 70 }, 0.0, 2.0, rl.white)
 
-            rl.draw_text("BACKGROUND SCROLLING & PARALLAX", 10, 10, 20, rl.red)
-            rl.draw_text("(c) Cyberpunk Street Environment by Luis Zuno (@ansimuz)", screen_width - 330, screen_height - 20, 10, rl.raywhite)
+            rl.draw_text('BACKGROUND SCROLLING & PARALLAX', 10, 10, 20, rl.red)
+            rl.draw_text('(c) Cyberpunk Street Environment by Luis Zuno (@ansimuz)', screen_width - 330, screen_height - 20, 10, rl.raywhite)
 
         rl.end_drawing()
     }

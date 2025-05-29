@@ -1,5 +1,3 @@
-module main
-
 /*******************************************************************************************
 *
 *   raylib [textures] example - sprite explosion
@@ -10,12 +8,16 @@ module main
 *   BSD-like license that allows static linking with closed source software
 *
 *   Copyright           (c) 2019-2023 Anata and Ramon Santamaria (@raysan5)
-*   Translated&Modified (c) 2024      Fedorov Alexandr          (@xydojnik)
+*   Translated&Modified (c) 2024      Fedorov Alexandr           (@xydojnik)
 *
 ********************************************************************************************/
 
+module main
+
+
 import raylib as rl
 
+const asset_path          = @VMODROOT+'/thirdparty/raylib/examples/textures/resources/'
 const num_frames_per_line = int(5)
 const num_lines           = int(5)
 
@@ -28,20 +30,20 @@ fn main() {
     screen_width  := 800
     screen_height := 450
 
-    rl.init_window(screen_width, screen_height, "raylib [textures] example - sprite explosion")
+    rl.init_window(screen_width, screen_height, 'raylib [textures] example - sprite explosion')
     defer { rl.close_window() }            // Close window and OpenGL context
 
     rl.init_audio_device()
     defer { rl.close_audio_device() }
 
     // Load explosion sound
-    fx_boom   := rl.load_sound("resources/boom.wav")
+    fx_boom   := rl.load_sound(asset_path+'boom.wav')
     // Load explosion texture
-    explosion := rl.load_texture("resources/explosion.png")
+    explosion := rl.Texture.load(asset_path+'explosion.png')
 
     defer {
-        rl.unload_texture(explosion) // Unload texture
-        rl.unload_sound(fx_boom)     // Unload sound
+        explosion.unload()       // Unload texture
+        rl.unload_sound(fx_boom) // Unload sound
     }
     
     // Init variables for animation

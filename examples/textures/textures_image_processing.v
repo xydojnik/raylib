@@ -1,5 +1,3 @@
-module main
-
 /*******************************************************************************************
 *
 *   raylib [textures] example - Image processing
@@ -11,13 +9,17 @@ module main
 *   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
 *   BSD-like license that allows static linking with closed source software
 *
-*   Copyright           (c) 2016-2023 Ramon Santamaria  (@raysan5)
+*   Copyright           (c) 2016-2023 Ramon Santamaria (@raysan5)
 *   Translated&Modified (c) 2024      Fedorov Alexandr (@xydojnik)
 *
 ********************************************************************************************/
 
+module main
+
+
 import raylib as rl
 
+const asset_path    = @VMODROOT+'/thirdparty/raylib/examples/textures/resources/'
 const num_processes = 9
 
 enum ImageProcess {
@@ -32,28 +34,16 @@ enum ImageProcess {
     flip_horizontal
 }
 
-// static const char *process_text[] = {
-//     "NO PROCESSING",
-//     "COLOR GRAYSCALE",
-//     "COLOR TINT",
-//     "COLOR INVERT",
-//     "COLOR CONTRAST",
-//     "COLOR BRIGHTNESS",
-//     "GAUSSIAN BLUR",
-//     "FLIP VERTICAL",
-//     "FLIP HORIZONTAL"
-// };
-
 const process_text = [
-    "NO PROCESSING",
-    "COLOR GRAYSCALE",
-    "COLOR TINT",
-    "COLOR INVERT",
-    "COLOR CONTRAST",
-    "COLOR BRIGHTNESS",
-    "GAUSSIAN BLUR",
-    "FLIP VERTICAL",
-    "FLIP HORIZONTAL"
+    'NO PROCESSING',
+    'COLOR GRAYSCALE',
+    'COLOR TINT',
+    'COLOR INVERT',
+    'COLOR CONTRAST',
+    'COLOR BRIGHTNESS',
+    'GAUSSIAN BLUR',
+    'FLIP VERTICAL',
+    'FLIP HORIZONTAL'
  ]
 
 
@@ -66,20 +56,20 @@ fn main() {
     screen_width  := 800
     screen_height := 450
 
-    rl.init_window(screen_width, screen_height, "raylib [textures] example - image processing")
+    rl.init_window(screen_width, screen_height, 'raylib [textures] example - image processing')
     defer { rl.close_window() }         // Close window and OpenGL context
 
     // NOTE: Textures MUST be loaded after Window initialization (OpenGL context is required)
 
-    im_origin := rl.load_image("resources/parrots.png")   // Loaded in CPU memory (RAM)
-    rl.image_format(&im_origin, rl.pixelformat_uncompressed_r8_g8_b8_a8)         // Format image to RGBA 32bit (required for texture update) <-- ISSUE
-    texture := rl.load_texture_from_image(im_origin)    // Image converted to texture, GPU memory (VRAM)
-    mut im_copy := rl.image_copy(im_origin)
+    mut im_origin := rl.Image.load(asset_path+'parrots.png')  // Loaded in CPU memory (RAM)
+    im_origin.format(rl.pixelformat_uncompressed_r8_g8_b8_a8) // Format image to RGBA 32bit (required for texture update) <-- ISSUE
+    texture := rl.Texture.load_from_image(im_origin)          // Image converted to texture, GPU memory (VRAM)
+    mut im_copy := im_origin.copy()
 
     defer {
-        rl.unload_texture(texture) // Unload texture from VRAM
-        rl.unload_image(im_origin) // Unload image-origin from RAM
-        rl.unload_image(im_copy)   // Unload image-copy from RAM
+        texture.unload()   // Unload texture from VRAM
+        im_origin.unload() // Unload image-origin from RAM
+        im_copy.unload()   // Unload image-copy from RAM
     }
 
     mut current_process := ImageProcess.@none
@@ -152,8 +142,8 @@ fn main() {
             }
 
             pixels := rl.load_image_colors(im_copy) // Load pixel data from image (RGBA 32bit)
-            rl.update_texture(texture, pixels)     // Update texture with new image data
-            rl.unload_image_colors(pixels)         // Unload pixels data from RAM
+            rl.update_texture(texture, pixels)      // Update texture with new image data
+            rl.unload_image_colors(pixels)          // Unload pixels data from RAM
 
             texture_reload = false
         }
@@ -165,7 +155,7 @@ fn main() {
 
             rl.clear_background(rl.raywhite)
 
-            rl.draw_text("IMAGE PROCESSING:", 40, 30, 10, rl.darkgray)
+            rl.draw_text('IMAGE PROCESSING:', 40, 30, 10, rl.darkgray)
 
             // Draw rectangles
             for i in 0..num_processes {
@@ -182,9 +172,10 @@ fn main() {
                 )
                 rl.draw_text(
                     process_text[i],
-                    int(toggle_recs[i].x) + int(toggle_recs[i].width)/2 - rl.measure_text(process_text[i], 10)/2,
+                    int(toggle_recs[i].x) + int(toggle_recs[i].width)/2 - rl.measure_text(process_text[i].str, 10)/2,
                     int(toggle_recs[i].y) + 11, 10,
-                    if (i == int(current_process)) || (i == mouse_hover_rec) { rl.darkblue } else { rl.darkgray })
+                    if (i == int(current_process)) || (i == mouse_hover_rec) { rl.darkblue } else { rl.darkgray }
+                )
             }
 
             rl.draw_texture(texture, screen_width - texture.width - 60, screen_height/2 - texture.height/2, rl.white)

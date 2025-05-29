@@ -1,5 +1,3 @@
-module main
-
 /*******************************************************************************************
 *
 *   raylib example - particles blending
@@ -9,14 +7,17 @@ module main
 *   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
 *   BSD-like license that allows static linking with closed source software
 *
-*   Copyright           (c) 2017-2023 Ramon Santamaria  (@raysan5)
+*   Copyright           (c) 2017-2023 Ramon Santamaria (@raysan5)
 *   Translated&Modified (c) 2024      Fedorov Alexandr (@xydojnik)
 *
 ********************************************************************************************/
 
+module main
+
+
 import raylib as rl
 
-
+const asset_path    = @VMODROOT+'/thirdparty/raylib/examples/textures/resources/'
 const max_particles = 200
 
 
@@ -41,7 +42,7 @@ fn main() {
     screen_width  := 800
     screen_height := 450
 
-    rl.init_window(screen_width, screen_height, "raylib [textures] example - particles blending")
+    rl.init_window(screen_width, screen_height, 'raylib [textures] example - particles blending')
     defer { rl.close_window() }      // Close window and OpenGL context
 
     // Particles pool, reuse them!
@@ -65,8 +66,8 @@ fn main() {
 
     gravity := f32(3.0)
 
-    smoke := rl.load_texture("resources/spark_flame.png")
-    defer { rl.unload_texture(smoke) }
+    smoke := rl.Texture.load(asset_path+'spark_flame.png')
+    defer { smoke.unload() }
 
     mut blending := rl.blend_alpha
 
@@ -131,12 +132,12 @@ fn main() {
 
             rl.end_blend_mode()
 
-            rl.draw_text("PRESS SPACE to CHANGE BLENDING MODE", 180, 20, 20, rl.black)
+            rl.draw_text('PRESS SPACE to CHANGE BLENDING MODE', 180, 20, 20, rl.black)
 
             if blending == rl.blend_alpha {
-                rl.draw_text("ALPHA BLENDING", 290, screen_height - 40, 20, rl.raywhite)
+                rl.draw_text('ALPHA BLENDING', 290, screen_height - 40, 20, rl.raywhite)
             } else {
-                rl.draw_text("ADDITIVE BLENDING", 280, screen_height - 40, 20, rl.black)
+                rl.draw_text('ADDITIVE BLENDING', 280, screen_height - 40, 20, rl.black)
             }
 
         rl.end_drawing()

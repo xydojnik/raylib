@@ -1,5 +1,3 @@
-module main
-
 /*******************************************************************************************
 *
 *   raylib [textures] example - blend modes
@@ -13,12 +11,18 @@ module main
 *   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
 *   BSD-like license that allows static linking with closed source software
 *
-*   Copyright           (c) 2020-2023 Karlo Licudine    (@accidentalrebel)
+*   Copyright           (c) 2020-2023 Karlo Licudine   (@accidentalrebel)
 *   Translated&Modified (c) 2024      Fedorov Alexandr (@xydojnik)
 *
 ********************************************************************************************/
 
+module main
+
 import raylib as rl
+
+
+const asset_path = @VMODROOT+'/thirdparty/raylib/examples/textures/resources/'
+
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -29,28 +33,28 @@ fn main() {
     screen_width  := 800
     screen_height := 450
 
-    rl.init_window(screen_width, screen_height, "raylib [textures] example - blend modes")
+    rl.init_window(screen_width, screen_height, 'raylib [textures] example - blend modes')
     defer { rl.close_window() }          // Close window and OpenGL context
 
     // NOTE: Textures MUST be loaded after Window initialization (OpenGL context is required)
-    bg_image   := rl.load_image("resources/cyberpunk_street_background.png") // Loaded in CPU memory (RAM)
-    bg_texture := rl.load_texture_from_image(bg_image)                       // Image converted to texture, GPU memory (VRAM)
+    bg_image   := rl.Image.load(asset_path+'cyberpunk_street_background.png') // Loaded in CPU memory (RAM)
+    bg_texture := rl.Texture.load_from_image(bg_image)                            // Image converted to texture, GPU memory (VRAM)
 
-    fg_image   := rl.load_image("resources/cyberpunk_street_foreground.png") // Loaded in CPU memory (RAM)
-    fg_texture := rl.load_texture_from_image(fg_image)                       // Image converted to texture, GPU memory (VRAM)
+    fg_image   := rl.Image.load(asset_path+'cyberpunk_street_foreground.png') // Loaded in CPU memory (RAM)
+    fg_texture := rl.Texture.load_from_image(fg_image)                            // Image converted to texture, GPU memory (VRAM)
 
     defer {
-        rl.unload_texture(fg_texture) // Unload foreground texture
-        rl.unload_texture(bg_texture) // Unload background texture
+        fg_texture.unload() // Unload foreground texture
+        bg_texture.unload() // Unload background texture
     }
     
     // Once image has been converted to texture and uploaded to VRAM, it can be unloaded from RAM
-    rl.unload_image(bg_image)
-    rl.unload_image(fg_image)
+    bg_image.unload()
+    fg_image.unload()
 
     blend_count_max := int(4)
 
-    mut blend_mode      := int(0)
+    mut blend_mode := int(0)
 
     // Main game loop
     for !rl.window_should_close() {  // Detect window close button or ESC key
@@ -76,21 +80,24 @@ fn main() {
             rl.end_blend_mode()
 
             // Draw the texts
-            rl.draw_text("Press SPACE to change blend modes.", 310, 350, 10, rl.gray)
+            rl.draw_text_with_background('Press SPACE to change blend modes.', rl.Vector2{305, 340}, 10, 5, rl.white, rl.black)
 
-            blend_txt := match blend_mode {
-                rl.blend_alpha      { "Current: BLEND_ALPHA"      }
-                rl.blend_additive   { "Current: BLEND_ADDITIVE"   } 
-                rl.blend_multiplied { "Current: BLEND_MULTIPLIED" }
-                rl.blend_add_colors { "Current: BLEND_ADD_COLORS" }
-                else { '' }
+            {
+                blend_txt := match blend_mode {
+                    rl.blend_alpha      { 'Current: BLEND_ALPHA'      }
+                    rl.blend_additive   { 'Current: BLEND_ADDITIVE'   } 
+                    rl.blend_multiplied { 'Current: BLEND_MULTIPLIED' }
+                    rl.blend_add_colors { 'Current: BLEND_ADD_COLORS' }
+                    else { '' }
+                }
+                txt_size  := 15
+                txt_width := rl.measure_text(blend_txt.str, txt_size)
+
+                rl.draw_text_with_background(blend_txt, rl.Vector2{screen_width/2-txt_width/2, 370}, txt_size, 5, rl.Color.lerp(rl.green, rl.white, 0.5), rl.black)
             }
 
-            rl.draw_text(blend_txt, screen_width/2-60, 370, 10, rl.green)
-
-            rl.draw_text("(c) Cyberpunk Street Environment by Luis Zuno (@ansimuz)", screen_width - 330, screen_height - 20, 10, rl.gray)
+            rl.draw_text('(c) Cyberpunk Street Environment by Luis Zuno (@ansimuz)', screen_width - 330, screen_height - 20, 10, rl.gray)
 
         rl.end_drawing()
-        //----------------------------------------------------------------------------------
     }
 }

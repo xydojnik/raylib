@@ -1,5 +1,3 @@
-module main
-
 /*******************************************************************************************
 *
 *   raylib [textures] example - sprite button
@@ -9,14 +7,17 @@ module main
 *   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
 *   BSD-like license that allows static linking with closed source software
 *
-*   Copyright           (c) 2019-2023 Ramon Santamaria  (@raysan5)
+*   Copyright           (c) 2019-2023 Ramon Santamaria (@raysan5)
 *   Translated&Modified (c) 2024      Fedorov Alexandr (@xydojnik)
 *
 ********************************************************************************************/
 
+module main
+
+
 import raylib as rl
 
-
+const asset_path = @VMODROOT+'/thirdparty/raylib/examples/textures/resources/'
 const num_frames = 3       // Number of frames (rectangles) for the button sprite texture
 
 
@@ -29,17 +30,17 @@ fn main() {
     screen_width  := 800
     screen_height := 450
 
-    rl.init_window(screen_width, screen_height, "raylib [textures] example - sprite button")
+    rl.init_window(screen_width, screen_height, 'raylib [textures] example - sprite button')
     defer { rl.close_window() }       // Close window and OpenGL context
 
     rl.init_audio_device()            // Initialize audio device
     defer { rl.close_audio_device() } // Close audio device
 
-    fx_button := rl.load_sound("resources/buttonfx.wav") // Load button sound
-    button    := rl.load_texture("resources/button.png") // Load button texture
+    fx_button := rl.load_sound(asset_path+'buttonfx.wav') // Load button sound
+    button    := rl.Texture.load(asset_path+'button.png') // Load button texture
 
     defer {
-        rl.unload_texture(button)  // Unload button texture
+        button.unload()            // Unload button texture
         rl.unload_sound(fx_button) // Unload sound
     }
     

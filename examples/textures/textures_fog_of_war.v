@@ -1,5 +1,3 @@
-module main
-
 /*******************************************************************************************
 *
 *   raylib [textures] example - Fog of war
@@ -9,10 +7,13 @@ module main
 *   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
 *   BSD-like license that allows static linking with closed source software
 *
-*   Copyright           (c) 2018-2023 Ramon Santamaria  (@raysan5)
+*   Copyright           (c) 2018-2023 Ramon Santamaria (@raysan5)
 *   Translated&Modified (c) 2024      Fedorov Alexandr (@xydojnik)
 *
 ********************************************************************************************/
+
+module main
+
 
 import raylib as rl
 
@@ -39,7 +40,7 @@ fn main() {
     screen_width  := 800
     screen_height := 450
 
-    rl.init_window(screen_width, screen_height, "raylib [textures] example - fog of war")
+    rl.init_window(screen_width, screen_height, 'raylib [textures] example - fog of war')
     defer { rl.close_window() }        // Close window and OpenGL context
 
     tiles_x := u32(25)
@@ -69,8 +70,8 @@ fn main() {
     // Render texture to render fog of war
     // NOTE: To get an automatic smooth-fog effect we use a render texture to render fog
     // at a smaller size (one pixel per tile) and scale it on drawing with bilinear filtering
-    fog_of_war := rl.load_render_texture(fog_map.tiles_x, fog_map.tiles_y)
-    defer { rl.unload_render_texture(fog_of_war) } // Unload render texture
+    fog_of_war := rl.RenderTexture.load(int(fog_map.tiles_x), int(fog_map.tiles_y))
+    defer { fog_of_war.unload() } // Unload render texture
 
     rl.set_texture_filter(fog_of_war.texture, rl.texture_filter_bilinear)
 
@@ -114,7 +115,7 @@ fn main() {
         for y := (player_tile_y - player_tile_visibility); y < (player_tile_y + player_tile_visibility); y++ {
             for x := (player_tile_x - player_tile_visibility); x < (player_tile_x + player_tile_visibility); x++ {
                 if (x >= 0) && (x < int(fog_map.tiles_x)) && (y >= 0) && (y < int(fog_map.tiles_y)) {
-                    fog_map.tile_fog[y*fog_map.tiles_x + x] = 1
+                    fog_map.tile_fog[y*int(fog_map.tiles_x) + x] = 1
                 }
             }
         }
@@ -128,9 +129,9 @@ fn main() {
             for y := u32(0); y < fog_map.tiles_y; y++ {
                 for x := u32(0); x < fog_map.tiles_x; x++ {
                         if fog_map.tile_fog[y*fog_map.tiles_x + x] == 0 {
-                            rl.draw_rectangle(x, y, 1, 1, rl.black)
+                            rl.draw_rectangle(int(x), int(y), 1, 1, rl.black)
                         } else if fog_map.tile_fog[y*fog_map.tiles_x + x] == 2 {
-                            rl.draw_rectangle(x, y, 1, 1, rl.Color.fade(rl.black, 0.8))
+                            rl.draw_rectangle(int(x), int(y), 1, 1, rl.Color.fade(rl.black, 0.8))
                         }
                 }
             }
@@ -144,11 +145,11 @@ fn main() {
                 for x := u32(0); x < fog_map.tiles_x; x++ {
                     // Draw tiles from id (and tile borders)
                         rl.draw_rectangle(
-                            x*map_tile_size, y*map_tile_size, map_tile_size, map_tile_size,
+                            int(x*map_tile_size), int(y*map_tile_size), map_tile_size, map_tile_size,
                             if fog_map.tile_ids[y*fog_map.tiles_x + x] == 0 { rl.blue } else { rl.Color.fade(rl.blue, 0.9) }
                         )
                         rl.draw_rectangle_lines(
-                            x*map_tile_size, y*map_tile_size, map_tile_size, map_tile_size, rl.Color.fade(rl.darkblue, 0.5)
+                            int(x*map_tile_size), int(y*map_tile_size), map_tile_size, map_tile_size, rl.Color.fade(rl.darkblue, 0.5)
                         )
                 }
             }
@@ -165,8 +166,8 @@ fn main() {
             )
 
             // Draw player current tile
-            rl.draw_text("Current tile: [${player_tile_x}, ${player_tile_y}]", 10, 10, 20, rl.raywhite)
-            rl.draw_text("ARROW KEYS to move", 10, screen_height-25, 20, rl.raywhite)
+            rl.draw_text('Current tile: [${player_tile_x}, ${player_tile_y}]', 10, 10, 20, rl.raywhite)
+            rl.draw_text('ARROW KEYS to move', 10, screen_height-25, 20, rl.raywhite)
 
         rl.end_drawing()
     }

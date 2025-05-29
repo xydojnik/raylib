@@ -1,5 +1,3 @@
-module main
-
 /*******************************************************************************************
 *
 *   raylib [textures] example - Draw part of the texture tiled
@@ -11,13 +9,17 @@ module main
 *   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
 *   BSD-like license that allows static linking with closed source software
 *
-*   Copyright           (c) 2020-2023 Vlad Adrian       (@demizdor) and Ramon Santamaria (@raysan5)
+*   Copyright           (c) 2020-2023 Vlad Adrian      (@demizdor) and Ramon Santamaria (@raysan5)
 *   Translated&Modified (c) 2024      Fedorov Alexandr (@xydojnik)
 *
 ********************************************************************************************/
 
+module main
+
+
 import raylib as rl
 
+const asset_path  = @VMODROOT+'/thirdparty/raylib/examples/textures/resources/'
 const opt_width   = 220       // Max width for the options container
 const margin_size =   8       // Size for the margins
 const color_size  =  16       // Size of the color select buttons
@@ -166,11 +168,11 @@ fn main() {
     screen_height := 450
 
     rl.set_config_flags(rl.flag_window_resizable) // Make the window resizable
-    rl.init_window(screen_width, screen_height, "raylib [textures] example - Draw part of a texture tiled")
+    rl.init_window(screen_width, screen_height, 'raylib [textures] example - Draw part of a texture tiled')
     defer { rl.close_window() }                                     // Close window and OpenGL context
 
     // NOTE: Textures MUST be loaded after Window initialization (OpenGL context is required)
-    tex_pattern := rl.load_texture("resources/patterns.png")
+    tex_pattern := rl.Texture.load(asset_path+'patterns.png')
     defer { rl.unload_texture(tex_pattern) }                        // Unload texture
     rl.set_texture_filter(tex_pattern, rl.texture_filter_trilinear) // Makes the texture smoother when upscaled
 
@@ -287,36 +289,36 @@ fn main() {
             )
 
             // Draw options
-            rl.draw_rectangle(margin_size, margin_size, opt_width - margin_size, rl.get_screen_height() - 2*margin_size, rl.color_alpha(rl.lightgray, 0.5))
+            rl.draw_rectangle(margin_size, margin_size, opt_width - margin_size, rl.get_screen_height() - 2*margin_size, rl.Color.alpha(rl.lightgray, 0.5))
 
-            rl.draw_text("Select Pattern", 2 + margin_size, 30 + margin_size, 10, rl.black)
+            rl.draw_text('Select Pattern', 2 + margin_size, 30 + margin_size, 10, rl.black)
             rl.draw_texture(tex_pattern, 2 + margin_size, 40 + margin_size, rl.black)
             rl.draw_rectangle(
                 2  + margin_size + int(rec_pattern[active_pattern].x),
                 40 + margin_size + int(rec_pattern[active_pattern].y),
                 int(rec_pattern[active_pattern].width),
                 int(rec_pattern[active_pattern].height),
-                rl.color_alpha(rl.darkblue, 0.3)
+                rl.Color.alpha(rl.darkblue, 0.3)
             )
 
-            rl.draw_text("Select rl.Color", 2+margin_size, 10+256+margin_size, 10, rl.black)
+            rl.draw_text('Select rl.Color', 2+margin_size, 10+256+margin_size, 10, rl.black)
             for i in 0..colors.len {
                 rl.draw_rectangle_rec(color_rec[i], colors[i])
                 if active_col == i {
-                    rl.draw_rectangle_lines_ex(color_rec[i], 3, rl.color_alpha(rl.white, 0.5))
+                    rl.draw_rectangle_lines_ex(color_rec[i], 3, rl.Color.alpha(rl.white, 0.5))
                 }
             }
 
-            rl.draw_text("Scale (UP/DOWN to change)", 2 + margin_size, 80 + 256 + margin_size, 10, rl.black)
-            rl.draw_text("${scale}", 2 + margin_size, 92 + 256 + margin_size, 20, rl.black)
+            rl.draw_text('Scale (UP/DOWN to change)', 2 + margin_size, 80 + 256 + margin_size, 10, rl.black)
+            rl.draw_text('${scale}', 2 + margin_size, 92 + 256 + margin_size, 20, rl.black)
 
-            rl.draw_text("Rotation (LEFT/RIGHT to change)", 2 + margin_size, 122 + 256 + margin_size, 10, rl.black)
-            rl.draw_text("${rotation} degrees", 2 + margin_size, 134 + 256 + margin_size, 20, rl.black)
+            rl.draw_text('Rotation (LEFT/RIGHT to change)', 2 + margin_size, 122 + 256 + margin_size, 10, rl.black)
+            rl.draw_text('${rotation} degrees', 2 + margin_size, 134 + 256 + margin_size, 20, rl.black)
 
-            rl.draw_text("Press [SPACE] to reset", 2 + margin_size, 164 + 256 + margin_size, 10, rl.darkblue)
+            rl.draw_text('Press [SPACE] to reset', 2 + margin_size, 164 + 256 + margin_size, 10, rl.darkblue)
 
             // Draw FPS
-            rl.draw_text("${rl.get_fps()} FPS", 2 + margin_size, 2 + margin_size, 20, rl.black)
+            rl.draw_text('${rl.get_fps()} FPS', 2 + margin_size, 2 + margin_size, 20, rl.black)
         rl.end_drawing()
     }
 }

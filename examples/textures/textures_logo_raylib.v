@@ -1,5 +1,3 @@
-module main
-
 /*******************************************************************************************
 *
 *   raylib [textures] example - Texture loading and drawing
@@ -9,12 +7,18 @@ module main
 *   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
 *   BSD-like license that allows static linking with closed source software
 *
-*   Copyright           (c) 2014-2023 Ramon Santamaria  (@raysan5)
+*   Copyright           (c) 2014-2023 Ramon Santamaria (@raysan5)
 *   Translated&Modified (c) 2024      Fedorov Alexandr (@xydojnik)
 *
 ********************************************************************************************/
 
+module main
+
+
 import raylib as rl
+
+
+const asset_path  = @VMODROOT+'/thirdparty/raylib/examples/textures/resources/'
 
 
 //------------------------------------------------------------------------------------
@@ -26,16 +30,16 @@ fn main() {
     screen_width  := 800
     screen_height := 450
 
-    rl.init_window(screen_width, screen_height, "raylib [textures] example - texture loading and drawing")
-    defer { rl.close_window() }                             // Close window and OpenGL context
+    rl.init_window(screen_width, screen_height, 'raylib [textures] example - texture loading and drawing')
+    defer { rl.close_window() }                              // Close window and OpenGL context
 
     // NOTE: Textures MUST be loaded after Window initialization (OpenGL context is required)
-    texture := rl.load_texture("resources/raylib_logo.png") // Texture loading
-    defer { rl.unload_texture(texture) }                    // Texture unloading
+    texture := rl.Texture.load(asset_path+'raylib_logo.png') // Texture loading
+    defer { texture.unload() }                               // Texture unloading
     //---------------------------------------------------------------------------------------
 
     // Main game loop
-    for !rl.window_should_close() {                         // Detect window close button or ESC key
+    for !rl.window_should_close() {                          // Detect window close button or ESC key
         // Update
         //----------------------------------------------------------------------------------
         // TODO: Update your variables here
@@ -49,7 +53,7 @@ fn main() {
 
             rl.draw_texture(texture, screen_width/2 - texture.width/2, screen_height/2 - texture.height/2, rl.white)
 
-            rl.draw_text("this IS a texture!", 360, 370, 10, rl.gray)
+            rl.draw_text('this IS a texture!', 360, 370, 10, rl.gray)
 
         rl.end_drawing()
     }

@@ -1,5 +1,3 @@
-module main
-
 /*******************************************************************************************
 *
 *   raylib [shapes] example - Draw Textured Polygon
@@ -11,13 +9,17 @@ module main
 *   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
 *   BSD-like license that allows static linking with closed source software
 *
-*   Copyright           (c) 2021-2023 Chris Camacho     (@codifies) and Ramon Santamaria (@raysan5)
+*   Copyright           (c) 2021-2023 Chris Camacho    (@codifies) and Ramon Santamaria (@raysan5)
 *   Translated&Modified (c) 2024      Fedorov Alexandr (@xydojnik)
 *
 ********************************************************************************************/
 
+module main
+
+
 import raylib as rl
 
+const asset_path = @VMODROOT+'/thirdparty/raylib/examples/textures/resources/'
 const max_points = int(11)      // 10 points and back to the start
 
 
@@ -59,7 +61,7 @@ fn main() {
     screen_width  := 800
     screen_height := 450
     
-    rl.init_window(screen_width, screen_height, "raylib [textures] example - textured polygon")
+    rl.init_window(screen_width, screen_height, 'raylib [textures] example - textured polygon')
     defer { rl.close_window() }        // Close window and OpenGL context
 
     // Define texture coordinates to map our texture to poly
@@ -94,8 +96,8 @@ fn main() {
     }
 
     // Load texture to be mapped to poly
-    texture := rl.load_texture("resources/cat.png")
-    defer { rl.unload_texture(texture) } // Unload texture
+    texture := rl.Texture.load(asset_path+'cat.png')
+    defer { texture.unload() } // Unload texture
 
     mut angle := f32(0.0)                // Rotation angle (in degrees)
 
@@ -120,7 +122,7 @@ fn main() {
 
             rl.clear_background(rl.raywhite)
 
-            rl.draw_text("textured polygon", 20, 20, 20, rl.darkgray)
+            rl.draw_text('textured polygon', 20, 20, 20, rl.darkgray)
             draw_texture_poly(
                 texture,
                 rl.Vector2 {

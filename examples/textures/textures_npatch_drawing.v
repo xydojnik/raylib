@@ -1,5 +1,3 @@
-module main
-
 /*******************************************************************************************
 *
 *   raylib [textures] example - N-patch drawing
@@ -13,12 +11,18 @@ module main
 *   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
 *   BSD-like license that allows static linking with closed source software
 *
-*   Copyright           (c) 2018-2023 Jorge A. Gomes    (@overdev) and Ramon Santamaria (@raysan5)
+*   Copyright           (c) 2018-2023 Jorge A. Gomes   (@overdev) and Ramon Santamaria (@raysan5)
 *   Translated&Modified (c) 2024      Fedorov Alexandr (@xydojnik)
 *
 ********************************************************************************************/
 
+module main
+
+
 import raylib as rl
+
+
+const asset_path  = @VMODROOT+'/thirdparty/raylib/examples/textures/resources/'
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -29,11 +33,11 @@ fn main() {
     screen_width  := 800
     screen_height := 450
 
-    rl.init_window(screen_width, screen_height, "raylib [textures] example - N-patch drawing")
+    rl.init_window(screen_width, screen_height, 'raylib [textures] example - N-patch drawing')
     defer { rl.close_window() }                  // Close window and OpenGL context
 
     // NOTE: Textures MUST be loaded after Window initialization (OpenGL context is required)
-    n_patch_texture := rl.load_texture("resources/ninepatch_button.png")
+    n_patch_texture := rl.Texture.load(asset_path+'ninepatch_button.png')
     defer { rl.unload_texture(n_patch_texture) } // Texture unloading
 
     mut mouse_position := rl.Vector2 {}
@@ -90,17 +94,17 @@ fn main() {
             rl.clear_background(rl.raywhite)
 
             // Draw the n-patches
-            rl.draw_texture_n_patch(n_patch_texture, nine_patch_info2, dst_rec2,  origin, 0.0, rl.white)
-            rl.draw_texture_n_patch(n_patch_texture, nine_patch_info1, dst_rec1,  origin, 0.0, rl.white)
-            rl.draw_texture_n_patch(n_patch_texture, h3_patch_info,    dst_rec_h, origin, 0.0, rl.white)
-            rl.draw_texture_n_patch(n_patch_texture, v3_patch_info,    dst_rec_v, origin, 0.0, rl.white)
+            rl.draw_texture_npatch(n_patch_texture, nine_patch_info2, dst_rec2,  origin, 0.0, rl.white)
+            rl.draw_texture_npatch(n_patch_texture, nine_patch_info1, dst_rec1,  origin, 0.0, rl.white)
+            rl.draw_texture_npatch(n_patch_texture, h3_patch_info,    dst_rec_h, origin, 0.0, rl.white)
+            rl.draw_texture_npatch(n_patch_texture, v3_patch_info,    dst_rec_v, origin, 0.0, rl.white)
 
             // Draw the source texture
             rl.draw_rectangle_lines(5, 88, 74, 266, rl.blue)
             rl.draw_texture(n_patch_texture, 10, 93, rl.white)
-            rl.draw_text("TEXTURE", 15, 360, 10, rl.darkgray)
+            rl.draw_text('TEXTURE', 15, 360, 10, rl.darkgray)
 
-            rl.draw_text("Move the mouse to stretch or shrink the n-patches", 10, 20, 20, rl.darkgray)
+            rl.draw_text('Move the mouse to stretch or shrink the n-patches', 10, 20, 20, rl.darkgray)
 
         rl.end_drawing()
     }
