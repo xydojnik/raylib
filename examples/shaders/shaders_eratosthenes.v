@@ -22,7 +22,7 @@
 *   BSD-like license that allows static linking with closed source software
 *
 *   Copyright           (c) 2019-2023 ProfJski and Ramon Santamaria (@raysan5)
-*   Translated&Modified (c) 2024      Fedorov Alexandr             (@xydojnik)
+*   Translated&Modified (c) 2024      Fedorov Alexandr              (@xydojnik)
 *
     
 ********************************************************************************************/

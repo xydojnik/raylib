@@ -6,7 +6,7 @@
 *   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
 *   BSD-like license that allows static linking with closed source software
 *   Copyright           (c) 2023 Justin Andreas Lacoste (@27justin)
-*   Translated&Modified (c) 2024      Fedorov Alexandr (@xydojnik)
+*   Translated&Modified (c) 2024      Fedorov Alexandr  (@xydojnik)
 ********************************************************************************************/
 
 module main

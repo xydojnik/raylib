@@ -14,7 +14,7 @@
 *   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
 *   BSD-like license that allows static linking with closed source software
 *
-*   Copyright           (c) 2019-2023 Chris Camacho     (@codifies) and Ramon Santamaria (@raysan5)
+*   Copyright           (c) 2019-2023 Chris Camacho    (@codifies) and Ramon Santamaria (@raysan5)
 *   Translated&Modified (c) 2024      Fedorov Alexandr (@xydojnik)
 *
 ********************************************************************************************/
@@ -36,7 +36,7 @@ fn main() {
     screen_width  := 800
     screen_height := 450
 
-    rl.set_config_flags(rl.flag_msaa_4x_hint) // Enable Multi Sampling Anti Aliasing 4x (if available)
+    rl.set_config_flags(rl.flag_msaa_4x_hint)      // Enable Multi Sampling Anti Aliasing 4x (if available)
     rl.init_window(screen_width, screen_height, 'raylib [shaders] example - basic lighting')
     defer { rl.close_window() }                    // Close window and OpenGL context
 

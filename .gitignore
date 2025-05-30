@@ -1,8 +1,5 @@
 thirdparty
 
-examples/shaders/resources
-examples/textures/resources
-
 # Ignore common editor/system specific metadata
 .DS_Store
 .idea/

@@ -1,0 +1,72 @@
+{
+    "path": "resources/models/plane.glb",
+    "transform": {
+        "position": {},
+        "rotation": {},
+        "scale": { "x": 1.0, "y": 1.0, "z": 1.0 }
+    },
+    "materials": [
+        {
+            "shader": {
+                "vs_path": "resources/shaders/glsl330/pbr.vs",
+                "fs_path": "resources/shaders/glsl330/pbr.fs"
+            },
+            "maps": [
+                {
+                    "type":     "albedo", 
+                    "texture":
+                    {
+                        "path":   "resources/road_a.png",
+                        "filter": "bilinear",
+                        "wrap":   "repeat",
+                        "mipmaps": true
+                    },
+                    "value": 0.0,
+                    "color": { "r": 255, "g": 255, "b": 255, "a": 255 }
+                },
+                {
+                    "type":   "metalness", 
+                    "texture":
+                    {
+                        "path":   "resources/road_mra.png",
+                        "filter": "bilinear",
+                        "wrap":   "clamp",
+                        "mipmaps": true
+                    },
+                    "value": 1.0,
+                    "color": {}
+                },
+                {
+                    "type":    "roughness", 
+                    "texture": {},
+                    "value":   0.0,
+                    "color":   {}
+                },
+                {
+                    "type":   "normal", 
+                    "texture":
+                    {
+                        "path":   "resources/road_n.png",
+                        "filter": "bilinear",
+                        "wrap":   "repeat",
+                        "mipmaps": true
+                    },
+                    "value": 0.0,
+                    "color": {}
+                },
+                {
+                    "type":    "occlusion", 
+                    "texture": {},
+                    "value":   1.0,
+                    "color":   {}
+                },
+                {
+                    "type":    "emission", 
+                    "texture": {},
+                    "value":   0.0,
+                    "color":   {}
+                }
+            ] 
+        }
+    ]
+}

@@ -24,17 +24,14 @@ import term
 import os
 import json
 
-const max_lights = 5           // Max dynamic lights supported by shader
 
-const asset_path = [
-    @VMODROOT+'/thirdparty/raylib/examples/shaders/resources/',
+const asset_path = $if USE_RAYLIB_PATH ? {
+    @VMODROOT+'/thirdparty/raylib/examples/shaders/resources/'
+} $else {
     'resources/'
-]!
-
-enum EAssetPath {
-    raylib= 0
-    local
 }
+
+const max_lights = $if USE_RAYLIB_PATH ? { 4 } $else { 5 } // Max dynamic lights supported by shader
 
 
 //----------------------------------------------------------------------------------
@@ -132,7 +129,7 @@ fn (texture Texture) str() string {
 
 fn Texture.load(file_path string) Texture {
     texture := Texture {
-        texture: rl.load_texture(file_path),
+        texture: rl.Texture.load(file_path),
         name:    rl.get_file_name(file_path)
     }
     println('${texture} '+term.bold(term.green('Loaded.')))
@@ -158,7 +155,6 @@ fn (mut tarr []Texture) foreach(fe fn(Texture)) {
 
 fn (mut tarr []Texture) unload() {
     tarr.foreach(fn(texture Texture) { texture.unload() })
-    unsafe { tarr.free() }
 }
 
 
@@ -286,7 +282,8 @@ fn (mut res_arr []Texture) load_json_model(json_path string, shader rl.Shader) !
             if js_mat_map.texture.path != "" {
                 js_tex_dat := js_mat_map.texture
                 
-                mut texture := rl.Texture.load(js_tex_dat.path)
+                // mut texture := rl.Texture.load(js_tex_dat.path)
+                mut texture := res_arr.load(js_tex_dat.path)
 
                 is_texture_valid := texture.is_valid()
                 if !is_texture_valid {
@@ -431,8 +428,8 @@ fn main() {
 
     // Load PBR shader and setup all required locations
     mut shader := rl.Shader.load(
-        (asset_path[int(EAssetPath.local)]+'shaders/glsl330/pbr.vs').str,
-        (asset_path[int(EAssetPath.local)]+'shaders/glsl330/pbr.fs').str
+        (asset_path+'shaders/glsl330/pbr.vs').str,
+        (asset_path+'shaders/glsl330/pbr.fs').str
     )!
     
     shader.set_loc(rl.shader_loc_map_albedo,    'albedoMap')
@@ -476,7 +473,17 @@ fn main() {
     // that model.materials[0] is by default assigned to that mesh
     // There could be more complex models consisting of multiple meshes and
     // multiple materials defined for those meshes... but always 1 mesh = 1 material
-    car := res_arr.load_json_model(asset_path[int(EAssetPath.local)]+'models/old_car.json', shader)!
+    car := $if USE_RAYLIB_PATH ? {
+        mut m := rl.Model.load(asset_path+'models/old_car_new.glb')
+        m.set_shader(0, shader)
+        m.set_texture(0, rl.material_map_albedo,    res_arr.load(asset_path+'old_car_d.png'))
+        m.set_texture(0, rl.material_map_normal,    res_arr.load(asset_path+'old_car_n.png'))
+        m.set_texture(0, rl.material_map_emission,  res_arr.load(asset_path+'old_car_e.png'))
+        m.set_texture(0, rl.material_map_metalness, res_arr.load(asset_path+'old_car_mra.png'))
+        m
+    } $else {
+        res_arr.load_json_model(asset_path+'models/old_car.json', shader)!
+    }
 
     // Load floor model mesh and assign material parameters
     // NOTE: A basic plane shape can be generated instead of being loaded from a model file
@@ -486,7 +493,16 @@ fn main() {
     // floor := rl.load_model_from_mesh(floor_mesh)
 
     // Assign material shader for our floor model, same PBR shader 
-    floor := res_arr.load_json_model(asset_path[int(EAssetPath.local)]+'models/floor.json', shader)!
+    floor := $if USE_RAYLIB_PATH ? {
+        mut m := rl.Model.load(asset_path+'models/plane.glb')
+        m.set_shader(0, shader)
+        m.set_texture(0, rl.material_map_albedo,    res_arr.load(asset_path+'road_a.png'))
+        m.set_texture(0, rl.material_map_metalness, res_arr.load(asset_path+'road_mra.png'))
+        m.set_texture(0, rl.material_map_normal,    res_arr.load(asset_path+'road_n.png'))
+        m
+    } $else {
+        res_arr.load_json_model(asset_path+'models/floor.json', shader)!
+    }
     
     // Models texture tiling parameter can be stored in the Material struct if required (CURRENTLY NOT USED)
     // NOTE: Material.params[4] are available for generic parameters storage (f32)
@@ -515,6 +531,9 @@ fn main() {
     }
     
     mut car_light := unsafe { &lights[lights.len-1] }
+    $if USE_RAYLIB_PATH ? {
+        car_light.position = light_positions[light_positions.len-1]
+    }
     car_light.intensity = 0.3
     
     // max_light_count := max_lights;
