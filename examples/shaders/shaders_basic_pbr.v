@@ -9,7 +9,7 @@
 // *   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
 // *   BSD-like license that allows static linking with closed source software
 // *
-// *   Copyright           (c) 2023-2024 Afan OLOVCIC      (@_DevDad)
+// *   Copyright           (c) 2023-2024 Afan OLOVCIC     (@_DevDad)
 // *   Translated&Modified (c) 2025      Fedorov Alexandr (@xydojnik)
 // *
 // *   Model: 'Old Rusty Car' (https://skfb.ly/LxRy) by Renafox, 
@@ -108,24 +108,29 @@ fn (light Light) update(shader rl.Shader) {
     shader.set_value(light.color_loc, color, rl.shader_uniform_vec4)
 }
 
+
 fn (mut lights []Light) add(position rl.Vector3, color rl.Color, shader rl.Shader) {
     lights << Light.create(position, color, shader, lights.len)
 }
+
 
 fn (lights []Light) update(shader rl.Shader) {
     for light in lights { light.update(shader) }
 }
 
-     
+
+
 struct Texture {
     texture rl.Texture
     name    string 
 }
 
+
 fn (texture Texture) str() string {
     return 'TEXTURE: ('+ term.bold(term.green('${texture.texture.id}'))+
             ') : [ '   + term.bold(term.green('${texture.name}'))+' ]'
 }
+
 
 fn Texture.load(file_path string) Texture {
     texture := Texture {
@@ -193,7 +198,7 @@ struct TransformData {
     scale    rl.Vector3
 }
 
-fn (td TransformData) to_matrix() rl.Matrix {
+fn (td TransformData) to_rl_matrix() rl.Matrix {
     translation := rl.Matrix.translate(td.position) 
     rotation    := rl.Matrix.rotate_xyz(td.rotation) 
     scale       := rl.Matrix.scale(td.scale.x, td.scale.y, td.scale.z) 
@@ -248,11 +253,11 @@ fn (mut res_arr []Texture) load_json_model(json_path string, shader rl.Shader) !
     assert js_model_data.path != ''
 
     // Model.
-    mut model := rl.load_model(js_model_data.path)
+    mut model := rl.Model.load(js_model_data.path)
     assert model.is_valid()
 
     // Transform
-    model.transform = js_model_data.transform.to_matrix()
+    model.transform = js_model_data.transform.to_rl_matrix()
 
     // Set shader
     model.set_shader(0, shader)
@@ -546,7 +551,7 @@ fn main() {
     shader.set_value(shader.get_loc('useTexNormal'),   &usage, rl.shader_uniform_int)
     shader.set_value(shader.get_loc('useTexMRA'),      &usage, rl.shader_uniform_int)
     shader.set_value(shader.get_loc('useTexEmissive'), &usage, rl.shader_uniform_int)
-
+    
     camera_mode_names := [
         'FREE',
         'ORBITAL',
@@ -594,7 +599,7 @@ fn main() {
         if rl.is_key_pressed(rl.key_l) { car_light.enabled = !car_light.enabled }
 
         // Update light values on shader (actually, only enable/disable them)
-        mut emissive_intensity := (rl.sinf(time*4)*rl.sinf(time*10)+1)*0.5  //f32(0.01)
+        emissive_intensity := (rl.sinf(time*4)*rl.sinf(time*10)+1)*0.5  //f32(0.01)
         car_light.intensity = emissive_intensity
         lights.update(shader) // for light in lights { light.update(shader) }
         //----------------------------------------------------------------------------------
@@ -605,9 +610,13 @@ fn main() {
             rl.clear_background(rl.black)
             rl.begin_mode_3d(camera)
                 // Set floor model texture tiling and emissive color parameters on shader
-                // shader.set_value(texture_tiling_loc, &floor_texture_tiling, rl.shader_uniform_vec2)
                 shader.set_value(texture_tiling_loc, &floor_texture_tiling, rl.shader_uniform_vec2)
-                
+
+                $if USE_RAYLIB_PATH ? {
+                    ambient := rl.fmaxf(ambient_intensity * lights.filter(it.enabled).len, 0.001)
+                    shader.set_value(shader.get_loc('ambient'), &ambient, rl.shader_uniform_float) 
+                }
+        
                 floor_emissive_color := unsafe {
                     rl.Color.normalize(floor.materials[0].maps[rl.material_map_emission].color)
                 }
@@ -617,20 +626,16 @@ fn main() {
                 floor.draw(rl.Vector3 {}, 5.0, rl.white)   // Draw floor model
 
                 // // Set old car model texture tiling, emissive color and emissive intensity parameters on shader
-                // shader.set_value(texture_tiling_loc, &car_texture_tiling, rl.shader_uniform_vec2)
                 shader.set_value(texture_tiling_loc, &car_texture_tiling, rl.shader_uniform_vec2)
 
                 car_emissive_color := unsafe {
                     rl.Color.normalize(car.materials[0].maps[rl.material_map_emission].color)
                 }
                 // shader.set_value(emissive_color_loc, &car_emissive_color, rl.shader_uniform_vec4)
-                shader.set_value(emissive_color_loc, &car_emissive_color, rl.shader_uniform_vec4)
-
-                // shader.set_value(emissive_intensity_loc, &emissive_intensity, rl.shader_uniform_float)
-                if !car_light.enabled { emissive_intensity = 0 }
+                shader.set_value(emissive_color_loc,     &car_emissive_color, rl.shader_uniform_vec4)
                 shader.set_value(emissive_intensity_loc, &emissive_intensity, rl.shader_uniform_float)   
         
-                // rl.draw_model(car, rl.Vector3 { 0.0, 0.0, 0.0 }, 0.25, rl.white)   // Draw car model
+                // rl.draw_model(car, rl.Vector3 {}, 0.25, rl.white)   // Draw car model
                 car.draw(rl.Vector3 {}, 0.25, rl.white)   // Draw car model
 
                 // Draw spheres to show the lights positions
@@ -693,7 +698,11 @@ fn main() {
                 }
             }
             {
-                txt       := '(c) Old Rusty Car model by Renafox (https://skfb.ly/LxRy) | Modified by Fedorov.'
+                txt := $if USE_RAYLIB_PATH ? {
+                    '(c) Old Rusty Car model by Renafox (https://skfb.ly/LxRy).'
+                } $else {
+                    '(c) Old Rusty Car model by Renafox (https://skfb.ly/LxRy) | Modified by Fedorov (xydojnik).'
+                }
                 txt_width := rl.measure_text(txt.str, 10)
                 rl.draw_text(txt, width-txt_width-20, height-20, 10, rl.lightgray)
 
