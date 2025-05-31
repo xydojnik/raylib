@@ -628,12 +628,13 @@ fn main() {
                 // // Set old car model texture tiling, emissive color and emissive intensity parameters on shader
                 shader.set_value(texture_tiling_loc, &car_texture_tiling, rl.shader_uniform_vec2)
 
-                car_emissive_color := unsafe {
-                    rl.Color.normalize(car.materials[0].maps[rl.material_map_emission].color)
+                if car_light.enabled {
+                    car_emissive_color := unsafe {
+                        rl.Color.normalize(car.materials[0].maps[rl.material_map_emission].color)
+                    }
+                    shader.set_value(emissive_color_loc,     &car_emissive_color, rl.shader_uniform_vec4)
+                    shader.set_value(emissive_intensity_loc, &emissive_intensity, rl.shader_uniform_float)   
                 }
-                // shader.set_value(emissive_color_loc, &car_emissive_color, rl.shader_uniform_vec4)
-                shader.set_value(emissive_color_loc,     &car_emissive_color, rl.shader_uniform_vec4)
-                shader.set_value(emissive_intensity_loc, &emissive_intensity, rl.shader_uniform_float)   
         
                 // rl.draw_model(car, rl.Vector3 {}, 0.25, rl.white)   // Draw car model
                 car.draw(rl.Vector3 {}, 0.25, rl.white)   // Draw car model
