@@ -69,12 +69,12 @@ fn Light.create(position rl.Vector3, color rl.Color, shader rl.Shader, light_ind
     assert light_index < max_lights
 
     light := Light {
-        enabled:   true,
-        type:      .light_point,
-        position:  position,
-        target:    rl.Vector3{},
-        color:     color,
-        intensity: 10,
+        enabled:       true,
+        type:          .light_point,
+        position:      position,
+        target:        rl.Vector3{},
+        color:         color,
+        intensity:     10,
 
         enabled_loc:   shader.get_loc('lights[${light_index}].enabled'),
         type_loc:      shader.get_loc('lights[${light_index}].type'),
@@ -83,10 +83,8 @@ fn Light.create(position rl.Vector3, color rl.Color, shader rl.Shader, light_ind
         color_loc:     shader.get_loc('lights[${light_index}].color'),
         intensity_loc: shader.get_loc('lights[${light_index}].intensity')
     }
-    
     // NOTE: rl.Shader parameters names for lights must match the requested ones
     // light.update(shader)
-
     return light
 }
 
@@ -104,7 +102,6 @@ fn (light Light) update(shader rl.Shader) {
     shader.set_value(light.intensity_loc, &light.intensity, rl.shader_uniform_float)
 
     color := rl.Vector4.divide_value(light.color.to_vec4(), 255).to_arr()
-    
     shader.set_value(light.color_loc, color, rl.shader_uniform_vec4)
 }
 
@@ -264,7 +261,6 @@ fn (mut res_arr []Texture) load_json_model(json_path string, shader rl.Shader) !
 
     // Materials
     for mi, mat in js_model_data.materials {
-
         // TODO: Update shader params:
         //    1. Get all attributes.
         //    2. Get all active uniforms.
@@ -419,7 +415,7 @@ fn main() {
     rl.init_window(width, height, 'raylib [shaders] example - basic pbr')
     
     rl.disable_cursor()
-    rl.set_target_fps(120)                        // Set our game to run at 60 frames-per-second
+    rl.set_target_fps(120)                       // Set our game to run at 60 frames-per-second
     // //---------------------------------------------------------------------------------------
 
     // Define the camera to look into our 3d world
@@ -495,8 +491,6 @@ fn main() {
     // mut floor_mesh := rl.gen_mesh_plane(10, 10, 10, 10)
     // rl.gen_mesh_tangents(&floor_mesh)      // TODO: Review tangents generation
     // reset_mesh(mut floor_mesh)
-    // floor := rl.load_model_from_mesh(floor_mesh)
-
     // Assign material shader for our floor model, same PBR shader 
     floor := $if USE_RAYLIB_PATH ? {
         mut m := rl.Model.load(asset_path+'models/plane.glb')
@@ -558,6 +552,7 @@ fn main() {
         'FIRST PERSON',
         'THIRD PERSON'
     ]
+
     camera_modes := [
         rl.camera_free,
         rl.camera_orbital,
@@ -577,12 +572,15 @@ fn main() {
         //----------------------------------------------------------------------------------
         time := f32(rl.get_time())
 
-        if camera_modes[camera_mode] == rl.camera_orbital ||
-           camera_modes[camera_mode] == rl.camera_third_person
+        current_camera_mode := camera_modes[camera_mode]
+        
+        if current_camera_mode == rl.camera_orbital ||
+           current_camera_mode == rl.camera_third_person
         {
            camera.target = rl.Vector3{ y:0.3 }
         }
-        rl.update_camera(&camera, camera_modes[camera_mode])
+
+        rl.update_camera(&camera, current_camera_mode)
 
         if rl.is_key_pressed(rl.key_c) {
             camera_mode = (camera_mode+1)%camera_modes.len
@@ -719,12 +717,10 @@ fn main() {
     // to avoid rl.unload_material() trying to unload it automatically
     unsafe {
         car.materials[0].shader = rl.Shader {}
-        // rl.unload_material(car.materials[0])
         car.materials[0].unload()
         car.materials[0].maps   = nil
 
         floor.materials[0].shader = rl.Shader{}
-        // rl.unload_material(floor.materials[0])
         floor.materials[0].unload()
         floor.materials[0].maps   = nil
     }
