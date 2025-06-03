@@ -90,7 +90,8 @@ Differences:
 > First three lines in a list was taken from: [raylib](https://github.com/vlang/raylib/blob/main/readme.md)
 
 ## Screenshots:
-![shaders_basic_pbr.v](https://github.com/xydojnik/raylib/examples/shaders/shaders_basic_pbr.png)
+> examples/shaders/shaders_basic_pbr.v
+![](https://github.com/xydojnik/raylib/blob/main/examples/shaders/shaders_basic_pbr.png)
 
 ## Useg
 To make games faster with vlang
