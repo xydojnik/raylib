@@ -67,7 +67,6 @@ pub mut:
 // Create light with provided data
 fn Light.create(position rl.Vector3, color rl.Color, shader rl.Shader, light_index int) Light {
     assert light_index < max_lights
-
     light := Light {
         enabled:       true,
         type:          .light_point,
@@ -75,7 +74,6 @@ fn Light.create(position rl.Vector3, color rl.Color, shader rl.Shader, light_ind
         target:        rl.Vector3{},
         color:         color,
         intensity:     10,
-
         enabled_loc:   shader.get_loc('lights[${light_index}].enabled'),
         type_loc:      shader.get_loc('lights[${light_index}].type'),
         position_loc:  shader.get_loc('lights[${light_index}].position'),
@@ -91,18 +89,16 @@ fn Light.create(position rl.Vector3, color rl.Color, shader rl.Shader, light_ind
 // Send light properties to shader
 // NOTE: Light shader locations should be available
 fn (light Light) update(shader rl.Shader) {
-    shader.set_value(light.enabled_loc, &light.enabled, rl.shader_uniform_int)
-    shader.set_value(light.type_loc,    &light.type,    rl.shader_uniform_int)
-
+    shader.set_value(light.enabled_loc,   &light.enabled,   rl.shader_uniform_int)
+    shader.set_value(light.type_loc,      &light.type,      rl.shader_uniform_int)
     // Send to shader light position values
-    shader.set_value(light.position_loc, &light.position, rl.shader_uniform_vec3)
-    
+    shader.set_value(light.position_loc,  &light.position,  rl.shader_uniform_vec3)
     // Send to shader light target position values
     shader.set_value(light.target_loc,    &light.target,    rl.shader_uniform_vec3)
     shader.set_value(light.intensity_loc, &light.intensity, rl.shader_uniform_float)
 
-    color := rl.Vector4.divide_value(light.color.to_vec4(), 255).to_arr()
-    shader.set_value(light.color_loc, color, rl.shader_uniform_vec4)
+    color_arr := rl.Vector4.divide_value(light.color.to_vec4(), 255).to_arr()
+    shader.set_value(light.color_loc, color_arr, rl.shader_uniform_vec4)
 }
 
 
@@ -118,45 +114,89 @@ fn (lights []Light) update(shader rl.Shader) {
 
 
 struct Texture {
-    texture rl.Texture
-    name    string 
+    name      string 
+    rltexture rl.Texture
 }
 
 
 fn (texture Texture) str() string {
-    return 'TEXTURE: ('+ term.bold(term.green('${texture.texture.id}'))+
+    return 'TEXTURE: ('+ term.bold(term.green('${texture.rltexture.id}'))+
             ') : [ '   + term.bold(term.green('${texture.name}'))+' ]'
 }
 
 
 fn Texture.load(file_path string) Texture {
-    texture := Texture {
-        texture: rl.Texture.load(file_path),
-        name:    rl.get_file_name(file_path)
+    mut texture := Texture {
+        rltexture: rl.Texture.load(file_path),
+        name:      rl.get_file_name(file_path)
     }
-    println('${texture} '+term.bold(term.green('Loaded.')))
     return texture
 }
 
 @[inline]
 fn (texture Texture) unload() {
     println('${texture} '+term.bold(term.red(' Unloaded.')))
-    texture.texture.unload()
+    texture.rltexture.unload()
 }
 
 
-fn (mut tarr []Texture) load(file_path string) rl.Texture {
-    texture := Texture.load(file_path)
+fn (mut tarr []Texture) load(file_path string, tex_filter int, tex_wrap int, gen_mipmaps bool) rl.Texture {
+    file_name    := rl.get_file_name(file_path)
+
+    mut contains_ind := tarr.contains_texture(file_name)
+    if contains_ind != -1 {
+        return tarr[contains_ind].rltexture
+    }
+    
+    mut texture := Texture.load(file_path)
+
+    if !texture.rltexture.is_valid() {
+        println('TEXTURE: ERROR. Could not load texture ${file_path}. Will return DEFAULT texture.')
+
+        default_texture_name := 'DEFAULT'
+        default_texture_size := int(256)
+        
+        contains_ind = tarr.contains_texture(default_texture_name)
+        if contains_ind != -1 {
+            return tarr[contains_ind].rltexture
+        }
+
+        img_w     := default_texture_size
+        img_h     := default_texture_size
+        txt       := 'ERROR!'
+        txt_size  := 40
+        txt_width := rl.measure_text(txt.str, 40)
+
+        mut img   := rl.Image.gen_checked(img_w, img_h, 16, 16, rl.yellow, rl.red)
+        defer { img.unload() }
+
+        rl.begin_drawing()
+            img.draw_rectangle((img_w/2-txt_width/2)-10, img_h/2-25, txt_width+25, txt_size, rl.red)
+            img.draw_text(txt, img_w/2-txt_width/2, img_h/2-20, txt_size, rl.white)
+        rl.end_drawing()
+
+        texture = Texture {
+            rltexture: img.to_texture()
+            name:      default_texture_name
+        }
+    } else {
+        texture.rltexture.set_filter(tex_filter)
+        texture.rltexture.set_wrap(tex_wrap)
+        if gen_mipmaps { texture.rltexture.gen_mipmaps() }
+        println('${texture} '+term.bold(term.green('Loaded.')))
+    }
+
     tarr << texture
-    return texture.texture
+    return texture.rltexture
 }
 
-fn (mut tarr []Texture) foreach(fe fn(Texture)) {
-    for texture in tarr { fe(texture) }
+fn (tarr []Texture) contains_texture(tex_name string) int {
+    for i, t in tarr { if t.name == tex_name { return i } }
+    return -1
 }
 
-fn (mut tarr []Texture) unload() {
-    tarr.foreach(fn(texture Texture) { texture.unload() })
+fn (tarr []Texture) unload() {
+    for tex in tarr { tex.unload() }
 }
 
 
@@ -184,10 +224,6 @@ struct MaterialData {
     shader ShaderData
     maps   []MaterialMap
 }
-
-// fn (md MaterialData) to_materials() []rl.Material {
-//     return []rl.Material
-// }
 
 struct TransformData {
     position rl.Vector3
@@ -245,7 +281,8 @@ const mat_map_ids = {
     'specular':   rl.material_map_specular
 }
 
-fn (mut res_arr []Texture) load_json_model(json_path string, shader rl.Shader) !rl.Model {
+
+fn load_json_model(json_path string, shader rl.Shader, mut tex_arr []Texture) !rl.Model {
     js_model_data := json.decode(ModelData, os.read_file(json_path)!)!
     assert js_model_data.path != ''
 
@@ -281,43 +318,10 @@ fn (mut res_arr []Texture) load_json_model(json_path string, shader rl.Shader) !
             map_id     := mat_map_ids[js_mat_map.type]
 
             if js_mat_map.texture.path != "" {
-                js_tex_dat := js_mat_map.texture
+                js_tex_data := js_mat_map.texture
                 
-                // mut texture := rl.Texture.load(js_tex_dat.path)
-                mut texture := res_arr.load(js_tex_dat.path)
-
-                is_texture_valid := texture.is_valid()
-                if !is_texture_valid {
-                    println('TEXTURE: ERROR. Could not load texture ${js_tex_dat.path}')
-                    img_w     := int(256)
-                    img_h     := int(256)
-                    txt       := 'ERROR!'
-                    txt_size := 40
-                    txt_width := rl.measure_text(txt.str, 40)
-                    // mut img := rl.Image.gen_color(img_w, img_h, rl.red)
-                    mut img := rl.Image.gen_checked(img_w, img_h, 16, 16, rl.yellow, rl.red)
-                    defer { img.unload() }
-
-                    rl.begin_drawing()
-                        img.draw_rectangle((img_w/2-txt_width/2)-10, img_h/2-25, txt_width+25, txt_size, rl.red)
-                        img.draw_text(txt, img_w/2-txt_width/2, img_h/2-20, txt_size, rl.white)
-                    rl.end_drawing()
-
-                    texture = img.to_texture()
-                }
-                if is_texture_valid {
-                    if js_tex_dat.filter != "" {
-                        texture.set_filter(tex_filter_ids[js_tex_dat.filter])
-                    }
-                    if js_tex_dat.wrap != "" {
-                        texture.set_wrap(tex_wrap_ids[js_tex_dat.wrap])
-                    }
-                    if js_tex_dat.mipmaps {
-                        texture.gen_mipmaps()
-                    }
-                }
+                mut texture := tex_arr.load(js_tex_data.path, tex_filter_ids[js_tex_data.filter], tex_wrap_ids[js_tex_data.wrap], true)
                 model.set_texture(mi, map_id, texture)
-                    
             }
             model.set_value(mi, map_id, js_mat_map.value)
             model.set_color(mi, map_id, js_mat_map.color)
@@ -327,80 +331,6 @@ fn (mut res_arr []Texture) load_json_model(json_path string, shader rl.Shader) !
     return model
 }
 
-
-struct ResManager {
-mut:
-    textures map[string]rl.Texture = map[string]rl.Texture{}
-    shaders  map[string]rl.Shader  = map[string]rl.Shader {}
-}
-
-// fn (mut rm ResManager) load_texture(tex_path string) rl.Texture {
-//     mut file_name := rl.get_file_name(tex_path)
-
-//     return rm.textures[file_name] or {
-//         mut texture := rl.load_texture(tex_path)
-//         println('MU TEXTUER: ${texture.id}. ${file_name}, w: ${texture.width}, h: ${texture.height}')
-//         if texture.width ==0 && texture.height == 0 {
-//             println('TEXTUER: ERROR. Loading DEFAULT')
-//             texture = rm.textures['DEFAULT'] or {
-//                 img_w     := int(256)
-//                 img_h     := img_w
-//                 font_size := int(20)
-//                 txt       := 'ERROR!'
-
-//                 txt_width := rl.measure_text(txt.str, font_size)
-
-//                 mut img := rl.Image.gen_checked(img_w, img_h, 16, 16, rl.red, rl.yellow)
-//                 defer { img.unload() }
-
-//                 rl.begin_drawing()
-//                     img.draw_text(txt, img_w/2-txt_width/2, img_h-font_size, font_size, rl.red) 
-//                 rl.end_drawing()
-
-//                 // texture   = rl.Texture.load_from_image(img)
-//                 file_name = 'DEFAULT'
-//                 texture   = img.to_texture()
-//                 texture
-//             }
-//         }
-//         rm.textures[file_name] = texture
-//         return texture
-//     }
-// }
-
-// fn (rm ResManager) get_texture(tex_name string) ?rl.Texture {
-//     return rm.textures[tex_name]
-// }
-
-// fn (rm ResManager) get_texture_index(tex_ind int) rl.Texture {
-//     assert tex_ind >= 0 && tex_ind < rm.textures.len
-//     return rm.textures.values()[tex_ind]
-// }
-
-// fn (mut rm ResManager) load_shader(vs_path &u8, fs_path &u8) rl.Shader {
-//     fs_file_name := if vs_path != voidptr(0) { rl.get_file_name(unsafe { vs_path.vstring() }) } else { '' }
-//     vs_file_name := if fs_path != voidptr(0) { rl.get_file_name(unsafe { fs_path.vstring() }) } else { '' }
-
-//     file_name := if fs_file_name == '' && vs_file_name == '' {
-//         'default'
-//     } else {
-//         fs_file_name+vs_file_name
-//     }
-    
-//     return rm.shaders[file_name] or {
-//         shader := if file_name == 'default' {
-//             rl.Shader.get_default()
-//         } else {
-//             rl.load_shader(vs_path, fs_path)
-//         }
-//         rm.shaders[file_name] = shader
-//         return shader
-//     }
-// }
-
-// fn (rm ResManager) get_shader(shader_name string) ?rl.Shader {
-//     return rm.shaders[shader_name] or { none }
-// }
 
 //----------------------------------------------------------------------------------
 // Main Entry Point
@@ -432,7 +362,7 @@ fn main() {
         (asset_path+'shaders/glsl330/pbr.vs').str,
         (asset_path+'shaders/glsl330/pbr.fs').str
     )!
-    
+
     shader.set_loc(rl.shader_loc_map_albedo,    'albedoMap')
     // WARNING: Metalness, roughness, and ambient occlusion are all packed into a MRA texture
     // They are passed as to the rl.shader_loc_map_metalness location for convenience,
@@ -468,7 +398,8 @@ fn main() {
     emissive_color_loc     := shader.get_loc('emissiveColor')
     texture_tiling_loc     := shader.get_loc('tiling')
 
-    mut res_arr := []Texture{ cap: 30 }
+    mut tex_arr := []Texture{ cap: 30 }
+
     // Load old car model using PBR maps and shader
     // WARNING: We know this model consists of a single model.meshes[0] and
     // that model.materials[0] is by default assigned to that mesh
@@ -477,13 +408,13 @@ fn main() {
     car := $if USE_RAYLIB_PATH ? {
         mut m := rl.Model.load(asset_path+'models/old_car_new.glb')
         m.set_shader(0, shader)
-        m.set_texture(0, rl.material_map_albedo,    res_arr.load(asset_path+'old_car_d.png'))
-        m.set_texture(0, rl.material_map_normal,    res_arr.load(asset_path+'old_car_n.png'))
-        m.set_texture(0, rl.material_map_emission,  res_arr.load(asset_path+'old_car_e.png'))
-        m.set_texture(0, rl.material_map_metalness, res_arr.load(asset_path+'old_car_mra.png'))
+        m.set_texture(0, rl.material_map_albedo,    tex_arr.load(asset_path+'old_car_d.png'))
+        m.set_texture(0, rl.material_map_normal,    tex_arr.load(asset_path+'old_car_n.png'))
+        m.set_texture(0, rl.material_map_emission,  tex_arr.load(asset_path+'old_car_e.png'))
+        m.set_texture(0, rl.material_map_metalness, tex_arr.load(asset_path+'old_car_mra.png'))
         m
     } $else {
-        res_arr.load_json_model(asset_path+'models/old_car.json', shader)!
+        load_json_model(asset_path+'models/old_car.json', shader, mut tex_arr)!
     }
 
     // Load floor model mesh and assign material parameters
@@ -495,12 +426,12 @@ fn main() {
     floor := $if USE_RAYLIB_PATH ? {
         mut m := rl.Model.load(asset_path+'models/plane.glb')
         m.set_shader(0, shader)
-        m.set_texture(0, rl.material_map_albedo,    res_arr.load(asset_path+'road_a.png'))
-        m.set_texture(0, rl.material_map_metalness, res_arr.load(asset_path+'road_mra.png'))
-        m.set_texture(0, rl.material_map_normal,    res_arr.load(asset_path+'road_n.png'))
+        m.set_texture(0, rl.material_map_albedo,    tex_arr.load(asset_path+'road_a.png'))
+        m.set_texture(0, rl.material_map_metalness, tex_arr.load(asset_path+'road_mra.png'))
+        m.set_texture(0, rl.material_map_normal,    tex_arr.load(asset_path+'road_n.png'))
         m
     } $else {
-        res_arr.load_json_model(asset_path+'models/floor.json', shader)!
+        load_json_model(asset_path+'models/floor.json', shader, mut tex_arr)!
     }
     
     // Models texture tiling parameter can be stored in the Material struct if required (CURRENTLY NOT USED)
@@ -515,6 +446,7 @@ fn main() {
         rl.yellow,
         rl.Color.lerp(rl.yellow, rl.white, 0.3)
     ]
+
     light_positions := [
         rl.Vector3{ -2.0, 1.0,  1.0 },
         rl.Vector3{  2.0, 1.0,  1.0 },
@@ -561,7 +493,7 @@ fn main() {
     ]
     mut camera_mode := camera_modes[0]
 
-    // t := res_arr[0]
+    // t := tex_arr[0]
     // img := rl.Image.load_from_texture(t.texture)
     // img := rl.Texture.to_image(t.texture)
     // img.export('Image.png')
@@ -595,6 +527,10 @@ fn main() {
         if rl.is_key_pressed(rl.key_y) { lights[3].enabled = !lights[3].enabled }
 
         if rl.is_key_pressed(rl.key_l) { car_light.enabled = !car_light.enabled }
+
+        if rl.is_key_pressed(rl.key_space) {
+            rl.take_screenshot('shaders_basic_pbr.png')
+        }
 
         // Update light values on shader (actually, only enable/disable them)
         emissive_intensity := (rl.sinf(time*4)*rl.sinf(time*10)+1)*0.5  //f32(0.01)
@@ -671,7 +607,7 @@ fn main() {
                 txt_pos_x   := 10
                 txt_pos_y   := 40
                 
-                leters      := [ "[R] ", "[G] ", "[B] ", "[Y] " ]
+                leters      := [ '[R] ', '[G] ', '[B] ', '[Y]' ]
                 leter_width := rl.measure_text(leters[0].str, txt_size)
                 txt_offset  := txt_pos_x+txt_width
                 
@@ -728,7 +664,82 @@ fn main() {
     floor.unload()
     car.unload()
     shader.unload()                // Unload rl.Shader
-    res_arr.unload()
+    tex_arr.unload()
     
     rl.close_window()              // Close window and OpenGL context
 }
+
+
+struct ResManager {
+mut:
+    textures map[string]rl.Texture = map[string]rl.Texture{}
+    shaders  map[string]rl.Shader  = map[string]rl.Shader {}
+}
+
+// fn (mut rm ResManager) load_texture(tex_path string) rl.Texture {
+//     mut file_name := rl.get_file_name(tex_path)
+
+//     return rm.textures[file_name] or {
+//         mut texture := rl.load_texture(tex_path)
+//         println('MU TEXTUER: ${texture.id}. ${file_name}, w: ${texture.width}, h: ${texture.height}')
+//         if texture.width ==0 && texture.height == 0 {
+//             println('TEXTUER: ERROR. Loading DEFAULT')
+//             texture = rm.textures['DEFAULT'] or {
+//                 img_w     := int(256)
+//                 img_h     := img_w
+//                 font_size := int(20)
+//                 txt       := 'ERROR!'
+
+//                 txt_width := rl.measure_text(txt.str, font_size)
+
+//                 mut img := rl.Image.gen_checked(img_w, img_h, 16, 16, rl.red, rl.yellow)
+//                 defer { img.unload() }
+
+//                 rl.begin_drawing()
+//                     img.draw_text(txt, img_w/2-txt_width/2, img_h-font_size, font_size, rl.red) 
+//                 rl.end_drawing()
+
+//                 // texture   = rl.Texture.load_from_image(img)
+//                 file_name = 'DEFAULT'
+//                 texture   = img.to_texture()
+//                 texture
+//             }
+//         }
+//         rm.textures[file_name] = texture
+//         return texture
+//     }
+// }
+
+// fn (rm ResManager) get_texture(tex_name string) ?rl.Texture {
+//     return rm.textures[tex_name]
+// }
+
+// fn (rm ResManager) get_texture_index(tex_ind int) rl.Texture {
+//     assert tex_ind >= 0 && tex_ind < rm.textures.len
+//     return rm.textures.values()[tex_ind]
+// }
+
+// fn (mut rm ResManager) load_shader(vs_path &u8, fs_path &u8) rl.Shader {
+//     fs_file_name := if vs_path != voidptr(0) { rl.get_file_name(unsafe { vs_path.vstring() }) } else { '' }
+//     vs_file_name := if fs_path != voidptr(0) { rl.get_file_name(unsafe { fs_path.vstring() }) } else { '' }
+
+//     file_name := if fs_file_name == '' && vs_file_name == '' {
+//         'default'
+//     } else {
+//         fs_file_name+vs_file_name
+//     }
+    
+//     return rm.shaders[file_name] or {
+//         shader := if file_name == 'default' {
+//             rl.Shader.get_default()
+//         } else {
+//             rl.load_shader(vs_path, fs_path)
+//         }
+//         rm.shaders[file_name] = shader
+//         return shader
+//     }
+// }
+
+// fn (rm ResManager) get_shader(shader_name string) ?rl.Shader {
+//     return rm.shaders[shader_name] or { none }
+// }
