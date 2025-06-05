@@ -90,16 +90,14 @@ fn Light.create(position rl.Vector3, color rl.Color, shader rl.Shader, light_ind
 // NOTE: Light shader locations should be available
 fn (light Light) update(shader rl.Shader) {
     // NOTE: rl.Shader parameters names for lights must match the requested ones
-    shader.set_value(light.enabled_loc,   &light.enabled,   rl.shader_uniform_int)
-    shader.set_value(light.type_loc,      &light.type,      rl.shader_uniform_int)
+    shader.set_value(light.enabled_loc,   &light.enabled,                       rl.shader_uniform_int)
+    shader.set_value(light.type_loc,      &light.type,                          rl.shader_uniform_int)
     // Send to shader light position values
-    shader.set_value(light.position_loc,  &light.position,  rl.shader_uniform_vec3)
+    shader.set_value(light.position_loc,  &light.position,                      rl.shader_uniform_vec3)
     // Send to shader light target position values
-    shader.set_value(light.target_loc,    &light.target,    rl.shader_uniform_vec3)
-    shader.set_value(light.intensity_loc, &light.intensity, rl.shader_uniform_float)
-
-    color_arr := rl.Vector4.divide_value(light.color.to_vec4(), 255).to_arr()
-    shader.set_value(light.color_loc, color_arr, rl.shader_uniform_vec4)
+    shader.set_value(light.target_loc,    &light.target,                        rl.shader_uniform_vec3)
+    shader.set_value(light.intensity_loc, &light.intensity,                     rl.shader_uniform_float)
+    shader.set_value(light.color_loc,     &light.color.normalize().to_arr()[0], rl.shader_uniform_vec4)
 }
 
 
@@ -139,7 +137,7 @@ fn (texture Texture) unload() {
 
 
 fn (mut tarr []Texture) load(file_path string, tex_filter int, tex_wrap int, gen_mipmaps bool) rl.Texture {
-    file_name    := rl.get_file_name(file_path)
+    file_name := rl.get_file_name(file_path)
 
     mut contains_ind := tarr.contains_texture(file_name)
     if contains_ind != -1 {
