@@ -81,7 +81,7 @@ fn Light.create(position rl.Vector3, color rl.Color, shader rl.Shader, light_ind
         color_loc:     shader.get_loc('lights[${light_index}].color'),
         intensity_loc: shader.get_loc('lights[${light_index}].intensity')
     }
-    // NOTE: rl.Shader parameters names for lights must match the requested ones
+    // NOTE: It will be update before rendering.
     // light.update(shader)
     return light
 }
@@ -89,6 +89,7 @@ fn Light.create(position rl.Vector3, color rl.Color, shader rl.Shader, light_ind
 // Send light properties to shader
 // NOTE: Light shader locations should be available
 fn (light Light) update(shader rl.Shader) {
+    // NOTE: rl.Shader parameters names for lights must match the requested ones
     shader.set_value(light.enabled_loc,   &light.enabled,   rl.shader_uniform_int)
     shader.set_value(light.type_loc,      &light.type,      rl.shader_uniform_int)
     // Send to shader light position values
@@ -106,7 +107,6 @@ fn (mut lights []Light) add(position rl.Vector3, color rl.Color, shader rl.Shade
     lights << Light.create(position, color, shader, lights.len)
 }
 
-
 fn (lights []Light) update(shader rl.Shader) {
     for light in lights { light.update(shader) }
 }
@@ -118,12 +118,10 @@ struct Texture {
     rltexture rl.Texture
 }
 
-
 fn (texture Texture) str() string {
     return 'TEXTURE: ('+ term.bold(term.green('${texture.rltexture.id}'))+
             ') : [ '   + term.bold(term.green('${texture.name}'))+' ]'
 }
-
 
 fn Texture.load(file_path string) Texture {
     mut texture := Texture {
@@ -384,14 +382,10 @@ fn main() {
     // Setup ambient color and intensity parameters
     ambient_intensity        := f32(0.02)
     ambient_color            := rl.Color{ 26, 32, 135, 255 }
-    ambient_color_normalized := rl.Vector3{
-        f32(ambient_color.r)/255.0,
-        f32(ambient_color.g)/255.0,
-        f32(ambient_color.b)/255.0
-    }
+    ambient_color_normalized := rl.Color.normalize(ambient_color).to_arr()[0..3]
 
-    shader.set_value(shader.get_loc('ambient_color'), &ambient_color_normalized, rl.shader_uniform_vec3)
-    shader.set_value(shader.get_loc('ambient'),       &ambient_intensity,        rl.shader_uniform_float)
+    shader.set_value(shader.get_loc('ambientColor'), ambient_color_normalized.data, rl.shader_uniform_vec3)
+    shader.set_value(shader.get_loc('ambient'),       &ambient_intensity,           rl.shader_uniform_float)
 
     // Get location for shader parameters that can be modified in real time
     emissive_intensity_loc := shader.get_loc('emissivePower');
@@ -514,10 +508,6 @@ fn main() {
 
         rl.update_camera(&camera, current_camera_mode)
 
-        if rl.is_key_pressed(rl.key_c) {
-            camera_mode = (camera_mode+1)%camera_modes.len
-        }
-
         shader.set_value(shader.get_loc_index(rl.shader_loc_vector_view), &camera.position, rl.shader_uniform_vec3)
 
         // Check key inputs to enable/disable lights
@@ -569,7 +559,7 @@ fn main() {
                     shader.set_value(emissive_color_loc,     &car_emissive_color, rl.shader_uniform_vec4)
                     shader.set_value(emissive_intensity_loc, &emissive_intensity, rl.shader_uniform_float)   
                 }
-        
+
                 // rl.draw_model(car, rl.Vector3 {}, 0.25, rl.white)   // Draw car model
                 car.draw(rl.Vector3 {}, 0.25, rl.white)   // Draw car model
 
@@ -670,11 +660,11 @@ fn main() {
 }
 
 
-struct ResManager {
-mut:
-    textures map[string]rl.Texture = map[string]rl.Texture{}
-    shaders  map[string]rl.Shader  = map[string]rl.Shader {}
-}
+// struct ResManager {
+// mut:
+//     textures map[string]rl.Texture = map[string]rl.Texture{}
+//     shaders  map[string]rl.Shader  = map[string]rl.Shader {}
+// }
 
 // fn (mut rm ResManager) load_texture(tex_path string) rl.Texture {
 //     mut file_name := rl.get_file_name(tex_path)

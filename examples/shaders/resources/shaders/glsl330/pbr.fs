@@ -1,9 +1,9 @@
 #version 330
 
-#define MAX_LIGHTS              5 // 4
-#define LIGHT_DIRECTIONAL       0
-#define LIGHT_POINT             1
-#define PI 3.14159265358979323846
+#define MAX_LIGHTS        5 // 4
+#define LIGHT_DIRECTIONAL 0
+#define LIGHT_POINT       1
+#define PI                3.14159265358979323846
 
 struct Light {
     int   enabled;
@@ -67,7 +67,7 @@ float GgxDistribution(float nDotH, float roughness) {
     float a = roughness * roughness * roughness * roughness;
     float d = nDotH * nDotH * (a - 1.0) + 1.0;
     d = PI * d * d;
-    return a / max(d,0.0000001);
+    return a / max(d, 0.0000001);
 }
 
 
@@ -156,11 +156,14 @@ vec3 ComputePBR() {
 }
 
 
+const vec3 gamma = vec3(1.0/2.2);
+
 void main(void) {
     vec3 color = ComputePBR();
 
     color = pow(color, color + vec3(1.0)); // HDR tonemapping
-    color = pow(color, vec3(1.0/2.2));     // Gamma correction
+    color = pow(color, gamma);             // Gamma correction
+    // color = pow(color, vec3(1.0/2.2));     // Gamma correction
 
     finalColor = vec4(color, 1.0);
 }
