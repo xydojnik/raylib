@@ -612,9 +612,9 @@ fn main() {
 
                     car_light_color, car_leter_color := if car_light.enabled {
                         light_radius *= emissive_intensity
-                        rl.Color.lerp(rl.Color.fade(rl.gray, 0.2), car_light.color, emissive_intensity), rl.red
+                        rl.Color.lerp(rl.gray.fade(0.2), car_light.color, emissive_intensity), rl.red
                     } else {
-                        rl.Color.fade(rl.gray, 0.2), rl.black
+                        rl.gray.fade(0.2), rl.black
                     }
 
                     rl.draw_circle(txt_pos_x+int(f32(leter_width)*0.35), txt_pos_y+int(f32(leter_width)*1.25), light_radius, car_light_color)

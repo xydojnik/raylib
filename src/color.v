@@ -115,6 +115,7 @@ pub fn Color.get(hex_value u32) Color {
 }
 
 
+
 // Using v like methods.
 @[inline]
 pub fn (c Color) fade(alpha f32) Color {
@@ -150,3 +151,5 @@ pub fn (c Color) alpha(alpha f32) Color {
 // pub fn Color.alpha_blend(dst Color, src Color, tint Color) Color {
 // 	return C.ColorAlphaBlend(dst, src, tint)
 // }
+
+// Using v like methods.
