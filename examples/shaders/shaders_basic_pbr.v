@@ -12,7 +12,7 @@
 // *   Copyright           (c) 2023-2024 Afan OLOVCIC     (@_DevDad)
 // *   Translated&Modified (c) 2025      Fedorov Alexandr (@xydojnik)
 // *
-// *   Model: 'Old Rusty Car' (https://skfb.ly/LxRy) by Renafox, 
+// *   Model: 'Old Rusty Car' (https://skfb.ly/LxRy) by Renafox,
 // *   licensed under Creative Commons Attribution-NonCommercial 
 // *   (http://creativecommons.org/licenses/by-nc/4.0/)
 // *
@@ -382,10 +382,10 @@ fn main() {
     // Setup ambient color and intensity parameters
     ambient_intensity        := f32(0.02)
     ambient_color            := rl.Color{ 26, 32, 135, 255 }
-    ambient_color_normalized := rl.Color.normalize(ambient_color).to_arr()[0..3]
+    ambient_color_normalized := ambient_color.normalize().to_arr()[0..3]
 
     shader.set_value(shader.get_loc('ambientColor'), ambient_color_normalized.data, rl.shader_uniform_vec3)
-    shader.set_value(shader.get_loc('ambient'),       &ambient_intensity,           rl.shader_uniform_float)
+    shader.set_value(shader.get_loc('ambient'),      &ambient_intensity,            rl.shader_uniform_float)
 
     // Get location for shader parameters that can be modified in real time
     emissive_intensity_loc := shader.get_loc('emissivePower');
@@ -402,10 +402,10 @@ fn main() {
     car := $if USE_RAYLIB_PATH ? {
         mut m := rl.Model.load(asset_path+'models/old_car_new.glb')
         m.set_shader(0, shader)
-        m.set_texture(0, rl.material_map_albedo,    tex_arr.load(asset_path+'old_car_d.png'))
-        m.set_texture(0, rl.material_map_normal,    tex_arr.load(asset_path+'old_car_n.png'))
-        m.set_texture(0, rl.material_map_emission,  tex_arr.load(asset_path+'old_car_e.png'))
-        m.set_texture(0, rl.material_map_metalness, tex_arr.load(asset_path+'old_car_mra.png'))
+        m.set_texture(0, rl.material_map_albedo,    tex_arr.load(asset_path+'old_car_d.png',   rl.texture_filter_bilinear, rl.texture_wrap_clamp, true))
+        m.set_texture(0, rl.material_map_normal,    tex_arr.load(asset_path+'old_car_n.png',   rl.texture_filter_bilinear, rl.texture_wrap_clamp, true))
+        m.set_texture(0, rl.material_map_emission,  tex_arr.load(asset_path+'old_car_e.png',   rl.texture_filter_bilinear, rl.texture_wrap_clamp, true))
+        m.set_texture(0, rl.material_map_metalness, tex_arr.load(asset_path+'old_car_mra.png', rl.texture_filter_bilinear, rl.texture_wrap_clamp, true))
         m
     } $else {
         load_json_model(asset_path+'models/old_car.json', shader, mut tex_arr)!
@@ -420,9 +420,9 @@ fn main() {
     floor := $if USE_RAYLIB_PATH ? {
         mut m := rl.Model.load(asset_path+'models/plane.glb')
         m.set_shader(0, shader)
-        m.set_texture(0, rl.material_map_albedo,    tex_arr.load(asset_path+'road_a.png'))
-        m.set_texture(0, rl.material_map_metalness, tex_arr.load(asset_path+'road_mra.png'))
-        m.set_texture(0, rl.material_map_normal,    tex_arr.load(asset_path+'road_n.png'))
+        m.set_texture(0, rl.material_map_albedo,    tex_arr.load(asset_path+'road_a.png',   rl.texture_filter_bilinear, rl.texture_wrap_clamp, true))
+        m.set_texture(0, rl.material_map_metalness, tex_arr.load(asset_path+'road_mra.png', rl.texture_filter_bilinear, rl.texture_wrap_clamp, true))
+        m.set_texture(0, rl.material_map_normal,    tex_arr.load(asset_path+'road_n.png',   rl.texture_filter_bilinear, rl.texture_wrap_clamp, true))
         m
     } $else {
         load_json_model(asset_path+'models/floor.json', shader, mut tex_arr)!
@@ -570,13 +570,13 @@ fn main() {
                     light_sin := (rl.sinf(time+i)+1)*.5
                     
                     light.intensity = light_sin*10.0
-                    light.color     = rl.Color.alpha(light.color, light_sin)
+                    light.color     = light.color.alpha(light_sin)
                     light.size      = (light_sin+1)*0.05
 
                     color, radius := if light.enabled {
                         light.color, light.size
                     } else {
-                        rl.Color.alpha(light.color, 0.1), f32(0.1)
+                        light.color.alpha(0.1), f32(0.1)
                     }
                     rl.draw_sphere_ex(light.position, radius, 8, 8, color)
                 }
@@ -612,9 +612,11 @@ fn main() {
 
                     car_light_color, car_leter_color := if car_light.enabled {
                         light_radius *= emissive_intensity
-                        rl.Color.lerp(rl.gray.fade(0.2), car_light.color, emissive_intensity), rl.red
+                        rl.Color.lerp(rl.gray.fade(0.2), car_light.color, emissive_intensity),
+                        rl.red
                     } else {
-                        rl.gray.fade(0.2), rl.black
+                        rl.gray.fade(0.2),
+                        rl.black
                     }
 
                     rl.draw_circle(txt_pos_x+int(f32(leter_width)*0.35), txt_pos_y+int(f32(leter_width)*1.25), light_radius, car_light_color)
