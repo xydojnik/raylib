@@ -49,6 +49,17 @@ pub const shader_uniform_ivec3       = C.SHADER_UNIFORM_IVEC3     // Shader unif
 pub const shader_uniform_ivec4       = C.SHADER_UNIFORM_IVEC4     // Shader uniform type: ivec4 (4 int)
 pub const shader_uniform_sampler_2d  = C.SHADER_UNIFORM_SAMPLER2D // Shader uniform type: sampler2d
 
+// pub enum ShaderUniformType as int {
+//     float       = C.SHADER_UNIFORM_FLOAT     // Shader uniform type: float
+//     vec2        = C.SHADER_UNIFORM_VEC2      // Shader uniform type: vec2 (2 float)
+//     vec3        = C.SHADER_UNIFORM_VEC3      // Shader uniform type: vec3 (3 float)
+//     vec4        = C.SHADER_UNIFORM_VEC4      // Shader uniform type: vec4 (4 float)
+//     integer     = C.SHADER_UNIFORM_INT       // Shader uniform type: int
+//     ivec2       = C.SHADER_UNIFORM_IVEC2     // Shader uniform type: ivec2 (2 int)
+//     ivec3       = C.SHADER_UNIFORM_IVEC3     // Shader uniform type: ivec3 (3 int)
+//     ivec4       = C.SHADER_UNIFORM_IVEC4     // Shader uniform type: ivec4 (4 int)
+//     sampler_2d  = C.SHADER_UNIFORM_SAMPLER2D // Shader uniform type: sampler2d
+// }
 
 // Shader attribute data types
 pub const shader_attrib_float = C.SHADER_ATTRIB_FLOAT // Shader attribute type: float
@@ -56,6 +67,12 @@ pub const shader_attrib_vec2  = C.SHADER_ATTRIB_VEC2  // Shader attribute type: 
 pub const shader_attrib_vec3  = C.SHADER_ATTRIB_VEC3  // Shader attribute type: vec3 (3 float)
 pub const shader_attrib_vec4  = C.SHADER_ATTRIB_VEC4  // Shader attribute type: vec4 (4 float)
 
+// pub enum ShaderAttribType as int {
+//     float = C.SHADER_ATTRIB_FLOAT // Shader attribute type: float
+//     vec2  = C.SHADER_ATTRIB_VEC2  // Shader attribute type: vec2 (2 float)
+//     vec3  = C.SHADER_ATTRIB_VEC3  // Shader attribute type: vec3 (3 float)
+//     vec4  = C.SHADER_ATTRIB_VEC4  // Shader attribute type: vec4 (4 float)
+// }
 
 // Shader
 @[typedef]
@@ -67,7 +84,7 @@ pub mut:
 pub type Shader = C.Shader
 
 pub fn (s Shader) operator [] (index int) int {
-    assert index >= 0 && index < 32
+    assert index >= 0 && index < max_shader_locations
     return unsafe { s.locs[index] }
 }
 
@@ -96,9 +113,9 @@ pub fn Shader.get_default() Shader {    // Load default shader
 @[inline] pub fn (s Shader) unload() { C.UnloadShader(s) }
 
 @[inline] pub fn (s Shader) enable()     { rl_enable_shader(s.id) }
-@[inline] pub fn Shader.enable(s Shader) { rl_enable_shader(s.id) }
-
 @[inline] pub fn (s Shader) disable()    { rl_disable_shader()    }
+
+@[inline] pub fn Shader.enable(s Shader) { rl_enable_shader(s.id) }
 @[inline] pub fn Shader.disable()        { rl_disable_shader()    }
 
 
@@ -112,9 +129,9 @@ pub fn (mut s Shader) set_loc(loc_index int, uniform_name string) {
     unsafe { s.locs[loc_index] = s.get_loc(uniform_name) }
 }
 
-pub fn (mut s Shader) set_loc_attrib(loc_index int, uniform_name string) {
+pub fn (mut s Shader) set_loc_attrib(loc_index int, attrib_name string) {
     assert loc_index <= max_shader_locations
-    unsafe { s.locs[loc_index] = s.get_loc_attrib(uniform_name) }
+    unsafe { s.locs[loc_index] = s.get_loc_attrib(attrib_name) }
 }
 
 @[inline]
@@ -166,4 +183,6 @@ pub fn (s Shader) get_loc_attrib(attrib_name string) int {
 
 fn C.IsShaderValid(s Shader) bool  // Check if a shader is valid (loaded on GPU)
 @[inline]
-pub fn (s Shader) is_valid() bool { return C.IsShaderValid(s) }
+pub fn (s Shader) is_valid() bool {
+    return C.IsShaderValid(s)
+}

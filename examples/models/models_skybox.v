@@ -81,7 +81,7 @@ fn main() {
         // NOTE 1: New texture is generated rendering to texture, shader calculates the sphere->cube coordinates mapping
         // NOTE 2: It seems on some Android devices WebGL, fbo does not properly support a FLOAT-based attachment,
         // despite texture can be successfully created.. so using rl.pixelformat_uncompressed_r8g8b8a8 instead of PIXELFORMAT_UNCOMPRESSED_R32G32B32A32
-        texture := rl.Texture2D(
+        texture := rl.Texture(
             // gen_texture_cubemap(shdr_cubemap, panorama, 1024, rl.pixelformat_uncompressed_r8g8b8a8)
             gen_texture_cubemap(shdr_cubemap, panorama, 1024, rl.rl_pixelformat_uncompressed_r8g8b8)
         )

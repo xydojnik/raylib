@@ -99,17 +99,12 @@ pub fn Light.create(ltype int, position Vector3, target Vector3, color Color, sh
 // NOTE: Light shader locations should be available 
 pub fn (light Light) update_values(shader Shader) {
     // Send to shader light enabled state and type
-    set_shader_value(shader, light.enabled_loc,  &light.enabled,  shader_uniform_int)
-    set_shader_value(shader, light.type_loc,     &light.ltype,    shader_uniform_int)
-    set_shader_value(shader, light.target_loc,   &light.target,   shader_uniform_vec3)
-    set_shader_value(shader, light.position_loc, &light.position, shader_uniform_vec3)
+    shader.set_value(light.enabled_loc,  &light.enabled,  shader_uniform_int)
+    shader.set_value(light.type_loc,     &light.ltype,    shader_uniform_int)
+    shader.set_value(light.target_loc,   &light.target,   shader_uniform_vec3)
+    shader.set_value(light.position_loc, &light.position, shader_uniform_vec3)
 
     // Send to shader light color values | 0.0 - 1.0 : floats
-    color := [
-        f32(light.color.r)/f32(255),
-        f32(light.color.g)/f32(255), 
-        f32(light.color.b)/f32(255),
-        f32(light.color.a)/f32(255)
-    ]
-    set_shader_value(shader, light.color_loc, color.data, shader_uniform_vec4)
+    color := light.color.normalize()
+    shader.set_value(light.color_loc, &color, shader_uniform_vec4)
 }

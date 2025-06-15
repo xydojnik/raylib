@@ -12,7 +12,7 @@
 // *   Copyright           (c) 2023-2024 Afan OLOVCIC     (@_DevDad)
 // *   Translated&Modified (c) 2025      Fedorov Alexandr (@xydojnik)
 // *
-// *   Model: 'Old Rusty Car' (https://skfb.ly/LxRy) by Renafox,
+// *   Model: 'Old Rusty Car' (https://skfb.ly/LxRy) by Renafox, 
 // *   licensed under Creative Commons Attribution-NonCommercial 
 // *   (http://creativecommons.org/licenses/by-nc/4.0/)
 // *
@@ -81,7 +81,7 @@ fn Light.create(position rl.Vector3, color rl.Color, shader rl.Shader, light_ind
         color_loc:     shader.get_loc('lights[${light_index}].color'),
         intensity_loc: shader.get_loc('lights[${light_index}].intensity')
     }
-    // NOTE: It will be update before rendering.
+    // NOTE: rl.Shader parameters names for lights must match the requested ones
     // light.update(shader)
     return light
 }
@@ -89,21 +89,23 @@ fn Light.create(position rl.Vector3, color rl.Color, shader rl.Shader, light_ind
 // Send light properties to shader
 // NOTE: Light shader locations should be available
 fn (light Light) update(shader rl.Shader) {
-    // NOTE: rl.Shader parameters names for lights must match the requested ones
-    shader.set_value(light.enabled_loc,   &light.enabled,                       rl.shader_uniform_int)
-    shader.set_value(light.type_loc,      &light.type,                          rl.shader_uniform_int)
+    shader.set_value(light.enabled_loc,   &light.enabled,   rl.shader_uniform_int)
+    shader.set_value(light.type_loc,      &light.type,      rl.shader_uniform_int)
     // Send to shader light position values
-    shader.set_value(light.position_loc,  &light.position,                      rl.shader_uniform_vec3)
+    shader.set_value(light.position_loc,  &light.position,  rl.shader_uniform_vec3)
     // Send to shader light target position values
-    shader.set_value(light.target_loc,    &light.target,                        rl.shader_uniform_vec3)
-    shader.set_value(light.intensity_loc, &light.intensity,                     rl.shader_uniform_float)
-    shader.set_value(light.color_loc,     &light.color.normalize().to_arr()[0], rl.shader_uniform_vec4)
+    shader.set_value(light.target_loc,    &light.target,    rl.shader_uniform_vec3)
+    shader.set_value(light.intensity_loc, &light.intensity, rl.shader_uniform_float)
+
+    color_arr := rl.Vector4.divide_value(light.color.to_vec4(), 255).to_arr()
+    shader.set_value(light.color_loc, color_arr, rl.shader_uniform_vec4)
 }
 
 
 fn (mut lights []Light) add(position rl.Vector3, color rl.Color, shader rl.Shader) {
     lights << Light.create(position, color, shader, lights.len)
 }
+
 
 fn (lights []Light) update(shader rl.Shader) {
     for light in lights { light.update(shader) }
@@ -116,10 +118,12 @@ struct Texture {
     rltexture rl.Texture
 }
 
+
 fn (texture Texture) str() string {
     return 'TEXTURE: ('+ term.bold(term.green('${texture.rltexture.id}'))+
             ') : [ '   + term.bold(term.green('${texture.name}'))+' ]'
 }
+
 
 fn Texture.load(file_path string) Texture {
     mut texture := Texture {
@@ -137,7 +141,7 @@ fn (texture Texture) unload() {
 
 
 fn (mut tarr []Texture) load(file_path string, tex_filter int, tex_wrap int, gen_mipmaps bool) rl.Texture {
-    file_name := rl.get_file_name(file_path)
+    file_name    := rl.get_file_name(file_path)
 
     mut contains_ind := tarr.contains_texture(file_name)
     if contains_ind != -1 {
@@ -313,10 +317,10 @@ fn load_json_model(json_path string, shader rl.Shader, mut tex_arr []Texture) !r
             js_mat_map := mat.maps[mp]
             map_id     := mat_map_ids[js_mat_map.type]
 
-            if js_mat_map.texture.path != "" {
+            if js_mat_map.texture.path != '' {
                 js_tex_data := js_mat_map.texture
                 
-                mut texture := tex_arr.load(js_tex_data.path, tex_filter_ids[js_tex_data.filter], tex_wrap_ids[js_tex_data.wrap], true)
+                texture := tex_arr.load(js_tex_data.path, tex_filter_ids[js_tex_data.filter], tex_wrap_ids[js_tex_data.wrap], true)
                 model.set_texture(mi, map_id, texture)
             }
             model.set_value(mi, map_id, js_mat_map.value)
@@ -380,10 +384,14 @@ fn main() {
     // Setup ambient color and intensity parameters
     ambient_intensity        := f32(0.02)
     ambient_color            := rl.Color{ 26, 32, 135, 255 }
-    ambient_color_normalized := ambient_color.normalize().to_arr()[0..3]
+    ambient_color_normalized := rl.Vector3{
+        f32(ambient_color.r)/255.0,
+        f32(ambient_color.g)/255.0,
+        f32(ambient_color.b)/255.0
+    }
 
-    shader.set_value(shader.get_loc('ambientColor'), ambient_color_normalized.data, rl.shader_uniform_vec3)
-    shader.set_value(shader.get_loc('ambient'),      &ambient_intensity,            rl.shader_uniform_float)
+    shader.set_value(shader.get_loc('ambient_color'), &ambient_color_normalized, rl.shader_uniform_vec3)
+    shader.set_value(shader.get_loc('ambient'),       &ambient_intensity,        rl.shader_uniform_float)
 
     // Get location for shader parameters that can be modified in real time
     emissive_intensity_loc := shader.get_loc('emissivePower');
@@ -400,10 +408,10 @@ fn main() {
     car := $if USE_RAYLIB_PATH ? {
         mut m := rl.Model.load(asset_path+'models/old_car_new.glb')
         m.set_shader(0, shader)
-        m.set_texture(0, rl.material_map_albedo,    tex_arr.load(asset_path+'old_car_d.png',   rl.texture_filter_bilinear, rl.texture_wrap_clamp, true))
-        m.set_texture(0, rl.material_map_normal,    tex_arr.load(asset_path+'old_car_n.png',   rl.texture_filter_bilinear, rl.texture_wrap_clamp, true))
-        m.set_texture(0, rl.material_map_emission,  tex_arr.load(asset_path+'old_car_e.png',   rl.texture_filter_bilinear, rl.texture_wrap_clamp, true))
-        m.set_texture(0, rl.material_map_metalness, tex_arr.load(asset_path+'old_car_mra.png', rl.texture_filter_bilinear, rl.texture_wrap_clamp, true))
+        m.set_texture(0, rl.material_map_albedo,    tex_arr.load(asset_path+'old_car_d.png'))
+        m.set_texture(0, rl.material_map_normal,    tex_arr.load(asset_path+'old_car_n.png'))
+        m.set_texture(0, rl.material_map_emission,  tex_arr.load(asset_path+'old_car_e.png'))
+        m.set_texture(0, rl.material_map_metalness, tex_arr.load(asset_path+'old_car_mra.png'))
         m
     } $else {
         load_json_model(asset_path+'models/old_car.json', shader, mut tex_arr)!
@@ -418,9 +426,9 @@ fn main() {
     floor := $if USE_RAYLIB_PATH ? {
         mut m := rl.Model.load(asset_path+'models/plane.glb')
         m.set_shader(0, shader)
-        m.set_texture(0, rl.material_map_albedo,    tex_arr.load(asset_path+'road_a.png',   rl.texture_filter_bilinear, rl.texture_wrap_clamp, true))
-        m.set_texture(0, rl.material_map_metalness, tex_arr.load(asset_path+'road_mra.png', rl.texture_filter_bilinear, rl.texture_wrap_clamp, true))
-        m.set_texture(0, rl.material_map_normal,    tex_arr.load(asset_path+'road_n.png',   rl.texture_filter_bilinear, rl.texture_wrap_clamp, true))
+        m.set_texture(0, rl.material_map_albedo,    tex_arr.load(asset_path+'road_a.png'))
+        m.set_texture(0, rl.material_map_metalness, tex_arr.load(asset_path+'road_mra.png'))
+        m.set_texture(0, rl.material_map_normal,    tex_arr.load(asset_path+'road_n.png'))
         m
     } $else {
         load_json_model(asset_path+'models/floor.json', shader, mut tex_arr)!
@@ -496,13 +504,15 @@ fn main() {
         //----------------------------------------------------------------------------------
         time := f32(rl.get_time())
 
-        current_camera_mode := camera_modes[camera_mode]
+        mut current_camera_mode := camera_modes[camera_mode]
         
         if current_camera_mode == rl.camera_orbital ||
            current_camera_mode == rl.camera_third_person
         {
            camera.target = rl.Vector3{ y:0.3 }
         }
+
+        if rl.is_key_pressed(rl.key_c) { camera_mode = (camera_mode+1)%camera_modes.len }
 
         rl.update_camera(&camera, current_camera_mode)
 
@@ -568,13 +578,13 @@ fn main() {
                     light_sin := (rl.sinf(time+i)+1)*.5
                     
                     light.intensity = light_sin*10.0
-                    light.color     = light.color.alpha(light_sin)
+                    light.color     = rl.Color.alpha(light.color, light_sin)
                     light.size      = (light_sin+1)*0.05
 
                     color, radius := if light.enabled {
                         light.color, light.size
                     } else {
-                        light.color.alpha(0.1), f32(0.1)
+                        rl.Color.alpha(light.color, 0.1), f32(0.1)
                     }
                     rl.draw_sphere_ex(light.position, radius, 8, 8, color)
                 }
@@ -610,11 +620,9 @@ fn main() {
 
                     car_light_color, car_leter_color := if car_light.enabled {
                         light_radius *= emissive_intensity
-                        rl.Color.lerp(rl.gray.fade(0.2), car_light.color, emissive_intensity),
-                        rl.red
+                        rl.Color.lerp(rl.Color.fade(rl.gray, 0.2), car_light.color, emissive_intensity), rl.red
                     } else {
-                        rl.gray.fade(0.2),
-                        rl.black
+                        rl.Color.fade(rl.gray, 0.2), rl.black
                     }
 
                     rl.draw_circle(txt_pos_x+int(f32(leter_width)*0.35), txt_pos_y+int(f32(leter_width)*1.25), light_radius, car_light_color)

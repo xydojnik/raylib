@@ -34,6 +34,13 @@ pub mut:
 }
 pub type Model = C.Model
 
+
+@[inline]
+pub fn (m Model) get_material(index int) Material {
+    assert index >= 0 && index < m.materialCount
+    return unsafe { m.materials[index] }
+}
+
 @[inline]
 pub fn (m Model) get_materials() []Material {
     return ptr_arr_to_varr[Material] (m.materials, m.materialCount)
